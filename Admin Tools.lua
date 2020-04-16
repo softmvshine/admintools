@@ -1,5 +1,5 @@
 script_name("Admin Tools")
-script_author("Fernando Miracle")
+script_author("Fernando Miracler")
 
 -- Инклуды --
 local encoding = require 'encoding'
