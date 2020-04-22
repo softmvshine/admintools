@@ -126,7 +126,7 @@ function main()
     end
 
     -- Команды --
-    sampRegisterChatCommand("/amenu", cmd_amenu)
+    sampRegisterChatCommand("amenu", cmd_amenu)
     -- Команды --
 
     wait(0)
