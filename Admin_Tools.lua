@@ -285,22 +285,58 @@ function main()
         end
         if wasKeyPressed(key.VK_F5) then
             if formb == true then
-				sampSendChat("/"..formacmd.." "..formaid.." "..formatime2.." • "..formaadm)
-				lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
-                formb = false
-                formacmd = nil
-                formaid = nil
-                formatime = nil
+                if formacmd == "warn" or formacmd == "kick" then 
+                    sampSendChat("/pm "..formaid.." Если вы не согласны с наказанием напишите жалобу forum.samp-states.ru")
+                    wait(500)
+                    sampSendChat("/"..formacmd.." "..formaid.." "..formatime2.." • "..formaadm)
+                    wait(2000) 
+                    sampSendChat("/a [FORMA] +")
+                    formb = false
+                    formacmd = nil
+                    formaid = nil
+                    formatime = nil
+                
+                else
+                    sampSendChat("/"..formacmd.." "..formaid.." "..formatime2.." • "..formaadm)
+                    wait(1000) 
+                    sampSendChat("/a [FORMA] +")
+                    formb = false
+                    formacmd = nil
+                    formaid = nil
+                    formatime = nil
+                end
             end
             if forma == true then
-				sampSendChat("/"..formacmd.." "..formaid2.." • "..formaadm)
-				lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
-                forma = false
-                formacmd = nil
-                formaid = nil
+                if formacmd == "inftime" then
+                    lua_thread.create(function()
+                        sampSendChat("/pm "..formaid2.." Если вы не согласны с получением наказания напишите жалобу на форум...")
+                        wait(500)
+                        sampSendChat("/pm "..formaid2.." Наш Форум: forum.samp-states.ru")
+                        wait(500)
+                        sampSendChat("/"..formacmd.." "..formaid2.." • "..formaadm)
+                        lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
+                        forma = false
+                        formacmd = nil
+                        formaid = nil
+                    end)
+                else
+                    sampSendChat("/"..formacmd.." "..formaid2.." • "..formaadm)
+                    lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
+                    forma = false
+                    formacmd = nil
+                    formaid = nil
+                end
 			end
-			if formc == true then
-				sampSendChat("/"..formacmd.." "..formaid3.." "..formatime3.." "..formareason3.." • "..formaadm)
+            if formc == true then
+                if formacmd == "jail" or formacmd == "ban" then
+                    lua_thread.create(function()
+                        sampSendChat("/pm "..formaid3.." Если вы не согласны с получением наказания напишите жалобу на форум...")
+                        wait(500)
+                        sampSendChat("/pm "..formaid3.." Наш Форум: forum.samp-states.ru")
+                        wait(500)
+                    end)
+                end
+                sampSendChat("/"..formacmd.." "..formaid3.." "..formatime3.." "..formareason3.." • "..formaadm)
 				lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
                 formc = false
                 formacmd = nil
@@ -330,8 +366,10 @@ end
 if text:find("[A]", 1, true) then
     if text:find("/(.*) (.*) (.*)") then
         formacmd, formaid, formatime2 = text:match("/(%S+) (%d+) (%S+)")
-        if formacmd == "kick" or formacmd == "warn" or formacmd == "sethp" then
-            formaadm = text:match("^%[A%] (%a+_%a+)")
+        if formacmd == "kick" or formacmd == "warn" or formacmd == "sethp" or formacmd == "skick" then
+            formadm = text:match("^%[A%] (%a+_%a+)")
+            local one, two = formadm:match("(.).*_(.*)")
+            formaadm = ("%s. %s"):format(one, two)
             formb = true
             lua_thread.create(function()
                 wait(100)
@@ -341,7 +379,9 @@ if text:find("[A]", 1, true) then
     end
     if text:find("/(.*) (.*)") then
         formacmd, formaid2 = text:match("/(%S+) (.*)")
-        formaadm = text:match("^%[A%] (%a+_%a+)")
+        formadm = text:match("^%[A%] (%a+_%a+)")
+        local one, two = formadm:match("(.).*_(.*)")
+        formaadm = ("%s. %s"):format(one, two)
         if formacmd == "slap" or formacmd == "uval" or formacmd == "msg" or formacmd == "inftime" then
             forma = true
             lua_thread.create(function()
@@ -352,7 +392,9 @@ if text:find("[A]", 1, true) then
     end
     if text:find("/(.*) (%d+) (%d+) (.*)") then
         formacmd, formaid3, formatime3, formareason3 = text:match("/(%S+) (%d+) (%d+) (.*)")
-        formaadm = text:match("^%[A%] (%a+_%a+)")
+        formadm = text:match("^%[A%] (%a+_%a+)")
+        local one, two = formadm:match("(.).*_(.*)")
+        formaadm = ("%s. %s"):format(one, two)
         if formacmd == "ban" or formacmd == "jail" or formacmd == "givegun" then
             formc = true
             lua_thread.create(function()
