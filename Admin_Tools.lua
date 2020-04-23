@@ -11,6 +11,8 @@ encoding.default = 'CP1251'
 u8 = encoding.UTF8
 -- Инклуды --
 
+local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED) -- свой id.
+local name = sampGetPlayerNickname(playerid) -- свой ник.
 
 whVisible = "all"
 optionsCommand = "settingswh"
@@ -30,6 +32,7 @@ imgui.Process = false
 local forma = false
 local formb = false
 local formc = false
+local admin_newmenu = imgui.ImBool(false)
 local show_admin_templeader = imgui.ImBool(false)
 local show_admin_tp = imgui.ImBool(false)
 local show_admin_menu = imgui.ImBool(false)
@@ -172,6 +175,10 @@ function imgui.OnDrawFrame()
             show_admin_info.v = not show_admin_info.v
             imgui.Process = show_admin_info.v
             end
+            if imgui.Button(u8'новое тестовое меню', btn_size) then
+            admin_newmenu.v = not admin_newmenu.v
+            imgui.Process = admin_newmenu.v
+            end
             imgui.End()
         end
         if show_admin_info.v then
@@ -298,8 +305,6 @@ function imgui.OnDrawFrame()
             local list = sampGetCurrentDialogListItem()
             if imgui.CollapsingHeader(u8'Государственные Структуры') then
                 if imgui.Button(u8'Правительство', btn_size) then 
-                    sampSendChat("/templeader") 
-                    sampSendDialogResponse(255, 0, 1)
 		        end
 		        if imgui.Button(u8'Полиция', btn_size) then 
 		        end
@@ -315,7 +320,32 @@ function imgui.OnDrawFrame()
 		        end
 		    end
 			imgui.End()
-		end
+        end
+        if admin_newmenu.v then
+		    local iScreenWidth, iScreenHeight = getScreenResolution()
+            local tLastKeys = {}
+            
+        imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
+        imgui.SetNextWindowSize(imgui.ImVec2(800, 400), imgui.Cond.FirstUseEver)
+        
+        imgui.Begin(u8"Admin Tools | Главное меню", admin_newmenu, imgui.WindowFlags.NoResize + imgui.WindowFlags.ShowBorders + imgui.WindowFlags.NoCollapse)
+        imgui.BeginChild('left', imgui.ImVec2(200, 0), true) 
+        
+        if not selected then selected = 1 end
+            if imgui.Selectable(u8'Основные настройки', false) then selected = 1 end
+            if imgui.Selectable(u8'Функции', false) then selected = 2 end
+            if imgui.Selectable(u8'Полезные скрипты', false) then selected = 3 end
+            if imgui.Selectable(u8'О скрипте', false) then selected = 4 end
+            imgui.EndChild()
+            imgui.SameLine()
+
+            imgui.BeginChild('right', imgui.ImVec2(0, 0), true) -- ЭТО ДЕЛАЕТ КРАШ!!!!
+
+            if selected == 1 then
+            imgui.Text(u8('ТЕКСТ'))
+            end
+			imgui.End()
+        end
     end
 end
 
@@ -351,7 +381,7 @@ function main()
         wait(0)
         if activate == false then return end
 
-        imgui.Process = show_admin_menu.v or show_admin_info.v or show_admin_tp.v or show_admin_templeader.v
+        imgui.Process = show_admin_menu.v or show_admin_info.v or show_admin_tp.v or show_admin_templeader.v or admin_newmenu.v
 
         if isKeyJustPressed(key.VK_3) and wasKeyPressed(key.VK_LMENU) then; 
             if defaultState then
