@@ -14,7 +14,6 @@ u8 = encoding.UTF8
 
 whVisible = "all"
 optionsCommand = "settingswh"
-KEY = VK_F5
 defaultState = false
 
 
@@ -287,7 +286,7 @@ function main()
 
         imgui.Process = show_admin_menu.v or show_admin_info.v or show_admin_tp.v
 
-        if wasKeyPressed(KEY) then; 
+        if isKeyJustPressed(key.VK_3) and wasKeyPressed(key.VK_LMENU) then; 
             if defaultState then
                 sampAddChatMessage("{ff0000}[Admin Tools]{FFFFFF} WallHack {ff0000}выключен{ffffff}", 0xFFFFFFFF)
                 defaultState = false; 
