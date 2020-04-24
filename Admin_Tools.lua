@@ -9,10 +9,11 @@ local imgui = require 'imgui'
 local encoding = require 'encoding'
 encoding.default = 'CP1251'
 u8 = encoding.UTF8
+local notf = import 'imgui_notf.lua'
 -- Инклуды --
 
 local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED) -- свой id.
-local name = sampGetPlayerNickname(playerid) -- свой ник.
+local names = sampGetPlayerNickname(playerid) -- свой ник.
 
 whVisible = "all"
 optionsCommand = "settingswh"
@@ -32,6 +33,7 @@ imgui.Process = false
 local forma = false
 local formb = false
 local formc = false
+local vzaimod = imgui.ImBool(false)
 local admin_newmenu = imgui.ImBool(false)
 local show_admin_templeader = imgui.ImBool(false)
 local show_admin_tp = imgui.ImBool(false)
@@ -85,60 +87,56 @@ function apply_custom_style()
     local colors = style.Colors
     local clr = imgui.Col
     local ImVec4 = imgui.ImVec4
-
-    style.WindowRounding = 2.0
-    style.WindowTitleAlign = imgui.ImVec2(0.5, 0.84)
+    style.WindowRounding = 2
+    style.WindowTitleAlign = imgui.ImVec2(0.5, 0.5)
     style.ChildWindowRounding = 2.0
-    style.FrameRounding = 2.0
+    style.FrameRounding = 3
     style.ItemSpacing = imgui.ImVec2(5.0, 4.0)
     style.ScrollbarSize = 13.0
     style.ScrollbarRounding = 0
     style.GrabMinSize = 8.0
     style.GrabRounding = 1.0
-
-    colors[clr.FrameBg]                = ImVec4(0.16, 0.48, 0.42, 0.54)
-    colors[clr.FrameBgHovered]         = ImVec4(0.26, 0.98, 0.85, 0.40)
-    colors[clr.FrameBgActive]          = ImVec4(0.26, 0.98, 0.85, 0.67)
-    colors[clr.TitleBg]                = ImVec4(0.04, 0.04, 0.04, 1.00)
-    colors[clr.TitleBgActive]          = ImVec4(0.16, 0.48, 0.42, 1.00)
-    colors[clr.TitleBgCollapsed]       = ImVec4(0.00, 0.00, 0.00, 0.51)
-    colors[clr.CheckMark]              = ImVec4(0.26, 0.98, 0.85, 1.00)
-    colors[clr.SliderGrab]             = ImVec4(0.24, 0.88, 0.77, 1.00)
-    colors[clr.SliderGrabActive]       = ImVec4(0.26, 0.98, 0.85, 1.00)
-    colors[clr.Button]                 = ImVec4(0.26, 0.98, 0.85, 0.40)
-    colors[clr.ButtonHovered]          = ImVec4(0.26, 0.98, 0.85, 1.00)
-    colors[clr.ButtonActive]           = ImVec4(0.06, 0.98, 0.82, 1.00)
-    colors[clr.Header]                 = ImVec4(0.26, 0.98, 0.85, 0.31)
-    colors[clr.HeaderHovered]          = ImVec4(0.26, 0.98, 0.85, 0.80)
-    colors[clr.HeaderActive]           = ImVec4(0.26, 0.98, 0.85, 1.00)
-    colors[clr.Separator]              = colors[clr.Border]
-    colors[clr.SeparatorHovered]       = ImVec4(0.10, 0.75, 0.63, 0.78)
-    colors[clr.SeparatorActive]        = ImVec4(0.10, 0.75, 0.63, 1.00)
-    colors[clr.ResizeGrip]             = ImVec4(0.26, 0.98, 0.85, 0.25)
-    colors[clr.ResizeGripHovered]      = ImVec4(0.26, 0.98, 0.85, 0.67)
-    colors[clr.ResizeGripActive]       = ImVec4(0.26, 0.98, 0.85, 0.95)
-    colors[clr.PlotLines]              = ImVec4(0.61, 0.61, 0.61, 1.00)
-    colors[clr.PlotLinesHovered]       = ImVec4(1.00, 0.81, 0.35, 1.00)
-    colors[clr.TextSelectedBg]         = ImVec4(0.26, 0.98, 0.85, 0.35)
-    colors[clr.Text]                   = ImVec4(1.00, 1.00, 1.00, 1.00)
-    colors[clr.TextDisabled]           = ImVec4(0.50, 0.50, 0.50, 1.00)
-    colors[clr.WindowBg]               = ImVec4(0.06, 0.06, 0.06, 0.94)
-    colors[clr.ChildWindowBg]          = ImVec4(1.00, 1.00, 1.00, 0.00)
-    colors[clr.PopupBg]                = ImVec4(0.08, 0.08, 0.08, 0.94)
-    colors[clr.ComboBg]                = colors[clr.PopupBg]
-    colors[clr.Border]                 = ImVec4(0.43, 0.43, 0.50, 0.50)
-    colors[clr.BorderShadow]           = ImVec4(0.00, 0.00, 0.00, 0.00)
-    colors[clr.MenuBarBg]              = ImVec4(0.14, 0.14, 0.14, 1.00)
-    colors[clr.ScrollbarBg]            = ImVec4(0.02, 0.02, 0.02, 0.53)
-    colors[clr.ScrollbarGrab]          = ImVec4(0.31, 0.31, 0.31, 1.00)
-    colors[clr.ScrollbarGrabHovered]   = ImVec4(0.41, 0.41, 0.41, 1.00)
-    colors[clr.ScrollbarGrabActive]    = ImVec4(0.51, 0.51, 0.51, 1.00)
-    colors[clr.CloseButton]            = ImVec4(0.41, 0.41, 0.41, 0.50)
-    colors[clr.CloseButtonHovered]     = ImVec4(0.98, 0.39, 0.36, 1.00)
-    colors[clr.CloseButtonActive]      = ImVec4(0.98, 0.39, 0.36, 1.00)
-    colors[clr.PlotHistogram]          = ImVec4(0.90, 0.70, 0.00, 1.00)
-    colors[clr.PlotHistogramHovered]   = ImVec4(1.00, 0.60, 0.00, 1.00)
-    colors[clr.ModalWindowDarkening]   = ImVec4(0.80, 0.80, 0.80, 0.35)
+    style.WindowPadding = imgui.ImVec2(4.0, 4.0)
+    style.FramePadding = imgui.ImVec2(3.5, 3.5)
+    style.ButtonTextAlign = imgui.ImVec2(0.0, 0.5)
+    colors[clr.WindowBg]              = ImVec4(0.14, 0.12, 0.16, 1.00);
+    colors[clr.ChildWindowBg]         = ImVec4(0.30, 0.20, 0.39, 0.00);
+    colors[clr.PopupBg]               = ImVec4(0.05, 0.05, 0.10, 0.90);
+    colors[clr.Border]                = ImVec4(0.89, 0.85, 0.92, 0.30);
+    colors[clr.BorderShadow]          = ImVec4(0.00, 0.00, 0.00, 0.00);
+    colors[clr.FrameBg]               = ImVec4(0.30, 0.20, 0.39, 1.00);
+    colors[clr.FrameBgHovered]        = ImVec4(0.41, 0.19, 0.63, 0.68);
+    colors[clr.FrameBgActive]         = ImVec4(0.41, 0.19, 0.63, 1.00);
+    colors[clr.TitleBg]               = ImVec4(0.41, 0.19, 0.63, 0.45);
+    colors[clr.TitleBgCollapsed]      = ImVec4(0.41, 0.19, 0.63, 0.35);
+    colors[clr.TitleBgActive]         = ImVec4(0.41, 0.19, 0.63, 0.78);
+    colors[clr.MenuBarBg]             = ImVec4(0.30, 0.20, 0.39, 0.57);
+    colors[clr.ScrollbarBg]           = ImVec4(0.30, 0.20, 0.39, 1.00);
+    colors[clr.ScrollbarGrab]         = ImVec4(0.41, 0.19, 0.63, 0.31);
+    colors[clr.ScrollbarGrabHovered]  = ImVec4(0.41, 0.19, 0.63, 0.78);
+    colors[clr.ScrollbarGrabActive]   = ImVec4(0.41, 0.19, 0.63, 1.00);
+    colors[clr.ComboBg]               = ImVec4(0.30, 0.20, 0.39, 1.00);
+    colors[clr.CheckMark]             = ImVec4(0.56, 0.61, 1.00, 1.00);
+    colors[clr.SliderGrab]            = ImVec4(0.41, 0.19, 0.63, 0.24);
+    colors[clr.SliderGrabActive]      = ImVec4(0.41, 0.19, 0.63, 1.00);
+    colors[clr.Button]                = ImVec4(0.41, 0.19, 0.63, 0.44);
+    colors[clr.ButtonHovered]         = ImVec4(0.41, 0.19, 0.63, 0.86);
+    colors[clr.ButtonActive]          = ImVec4(0.64, 0.33, 0.94, 1.00);
+    colors[clr.Header]                = ImVec4(0.41, 0.19, 0.63, 0.76);
+    colors[clr.HeaderHovered]         = ImVec4(0.41, 0.19, 0.63, 0.86);
+    colors[clr.HeaderActive]          = ImVec4(0.41, 0.19, 0.63, 1.00);
+    colors[clr.ResizeGrip]            = ImVec4(0.41, 0.19, 0.63, 0.20);
+    colors[clr.ResizeGripHovered]     = ImVec4(0.41, 0.19, 0.63, 0.78);
+    colors[clr.ResizeGripActive]      = ImVec4(0.41, 0.19, 0.63, 1.00);
+    colors[clr.CloseButton]           = ImVec4(1.00, 1.00, 1.00, 0.75);
+    colors[clr.CloseButtonHovered]    = ImVec4(0.88, 0.74, 1.00, 0.59);
+    colors[clr.CloseButtonActive]     = ImVec4(0.88, 0.85, 0.92, 1.00);
+    colors[clr.PlotLines]             = ImVec4(0.89, 0.85, 0.92, 0.63);
+    colors[clr.PlotLinesHovered]      = ImVec4(0.41, 0.19, 0.63, 1.00);
+    colors[clr.PlotHistogram]         = ImVec4(0.89, 0.85, 0.92, 0.63);
+    colors[clr.PlotHistogramHovered]  = ImVec4(0.41, 0.19, 0.63, 1.00);
+    colors[clr.TextSelectedBg]        = ImVec4(0.41, 0.19, 0.63, 0.43);
+    colors[clr.ModalWindowDarkening]  = ImVec4(0.20, 0.20, 0.20, 0.35);
     end
     
     do
@@ -180,9 +178,10 @@ function imgui.OnDrawFrame()
             if selected == 1 then
 			imgui.Text(u8('Информация / Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
 			imgui.Separator()
-			if imgui.CollapsingHeader(u8'Правила наказаний') then
-			imgui.Text(u8'Наказание Бан:\nИгрокам запрещено использовать посторонние чит-программы, программы взлома игрового функционала. Наказание: бан 30 дней.\nИспользование / хранение запрещённых читерских программ: Aim, Speed Hack, Wall Hack, Fly, DGun, Cleo HP, Autorepair/GM Car, Airbreak, Fast Gan, Рванка Собейт - от 10 до 30 дней\nУпоминание родных /Оскорбление в нике - 30 дней бана.\nОскорбление родных - от 10 до 30 дней бана.\nНеадекватное поведение - от 1 до 3 дней бана.\nЗа рекламу других серверов сайтов форумов и прочее нарушителю выдается бан на 7 дней + ban IP.\nЗа оскорбление проекта в любой чат сервера нарушителю выдается бан на 7 дней + ban IP.\nНа сервере запрещено всяческое мошенничество других игроков, обман, и мошенничество в целях кражи личного имущества (Недвижимость,ТС, Вирты) игроков. Наказание: бан 30 дней.\nЗапрещен обман администрации проекта, наказывается: BAN 3 day.\nЗа использования багоюза системы сервера, нарушителю выдается бан до 5 дней.\n\nНаказание Мут:\nИгрокам запрещено оскорблять других игроков, выражаться нецензурной бранью в ООС и IC чаты, оскорблять и унижать честь и достоинства игроков. Наказание: Mute 30 min.\nЗа CAPS в ic чат, в репорт или в /r /f чаты нарушителю выдается бан чата до 10 минут.\nЗа оффтоп в репорт нарушителю выдается бан чата на 20 минут.\nЗа флуд во все чаты включая /b чат нарушителю выдается бан чата от 10 до 20 минут.\nЗа оскорбление игрока или администратора в репорт игрок получает бан чата до 60 минут.\nЗа транслит в ic чат нарушителю выдаётся бан чата от 5 до 10 минут.\n\nНаказние Варн/Деморган:\nЛюбому игроку запрещено нарушать игровой процесс и влезать в него под основанием DM. Убийство без причины//массовое убийство игроков//нарушение игрового процесса...\n...убийство не имея на то Role Play оснований, наказывается: деморган 2 часа.\nИгрокам запрещено использовать в качестве оружия для убийства транспортное средство (DB), не имея на то Role Play оснований наказание: деморган 30 - 60 минут.\nЗа ДМ в ЗЗ нарушителю выдается деморган 15 - 30 минут.\nЗа ДМ нарушителю выдается деморган 15 - 30 минут.\nЗа SpawnKill нарушителю выдается деморган 15 - 20 минут.\nЗа ДБ нарушитель помещается в деморган 15 - 20 минут.\nЗа Team kill нарушителю выдается варн или деморган 30 - 60 минут.\nЗа сбив анимации игроку выдаётся деморган 15 минут.\nЗа использования багоюза +с, выдается деморган 15 минут.. Исключение, гетто.\nЗа ДМ в КПЗ, нарушителю выдается варн.')
-			end
+			if imgui.Button(u8'Правила наказаний', btn_size) then
+                show_admin_prav.v = not show_admin_prav.v
+                imgui.Process = show_admin_prav.v
+            end
 		end	
 		if selected == 2 then
 			imgui.Text(u8('Список команд / Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
@@ -349,6 +348,90 @@ function imgui.OnDrawFrame()
 			imgui.EndChild()
 			imgui.End()
         end
+        if show_admin_prav.v then
+		    local sw, sh = getScreenResolution()
+		    -- center
+		    imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
+		    imgui.SetNextWindowSize(imgui.ImVec2(1190, 400), imgui.Cond.FirstUseEver)
+		    imgui.Begin(u8'', show_admin_prav, imgui.WindowFlags.NoResize + imgui.WindowFlags.ShowBorders + imgui.WindowFlags.NoCollapse)
+		    local btn_size = imgui.ImVec2(-0.1, 0)
+			imgui.Text(u8'Наказание Бан:\nИгрокам запрещено использовать посторонние чит-программы, программы взлома игрового функционала. Наказание: бан 30 дней.\nИспользование / хранение запрещённых читерских программ: Aim, Speed Hack, Wall Hack, Fly, DGun, Cleo HP, Autorepair/GM Car, Airbreak, Fast Gan, Рванка Собейт - от 10 до 30 дней\nУпоминание родных /Оскорбление в нике - 30 дней бана.\nОскорбление родных - от 10 до 30 дней бана.\nНеадекватное поведение - от 1 до 3 дней бана.\nЗа рекламу других серверов сайтов форумов и прочее нарушителю выдается бан на 7 дней + ban IP.\nЗа оскорбление проекта в любой чат сервера нарушителю выдается бан на 7 дней + ban IP.\nНа сервере запрещено всяческое мошенничество других игроков, обман, и мошенничество в целях кражи личного имущества (Недвижимость,ТС, Вирты) игроков. Наказание: бан 30 дней.\nЗапрещен обман администрации проекта, наказывается: BAN 3 day.\nЗа использования багоюза системы сервера, нарушителю выдается бан до 5 дней.\n\nНаказание Мут:\nИгрокам запрещено оскорблять других игроков, выражаться нецензурной бранью в ООС и IC чаты, оскорблять и унижать честь и достоинства игроков. Наказание: Mute 30 min.\nЗа CAPS в ic чат, в репорт или в /r /f чаты нарушителю выдается бан чата до 10 минут.\nЗа оффтоп в репорт нарушителю выдается бан чата на 20 минут.\nЗа флуд во все чаты включая /b чат нарушителю выдается бан чата от 10 до 20 минут.\nЗа оскорбление игрока или администратора в репорт игрок получает бан чата до 60 минут.\nЗа транслит в ic чат нарушителю выдаётся бан чата от 5 до 10 минут.\n\nНаказние Варн/Деморган:\nЛюбому игроку запрещено нарушать игровой процесс и влезать в него под основанием DM. Убийство без причины//массовое убийство игроков//нарушение игрового процесса...\n...убийство не имея на то Role Play оснований, наказывается: деморган 2 часа.\nИгрокам запрещено использовать в качестве оружия для убийства транспортное средство (DB), не имея на то Role Play оснований наказание: деморган 30 - 60 минут.\nЗа ДМ в ЗЗ нарушителю выдается деморган 15 - 30 минут.\nЗа ДМ нарушителю выдается деморган 15 - 30 минут.\nЗа SpawnKill нарушителю выдается деморган 15 - 20 минут.\nЗа ДБ нарушитель помещается в деморган 15 - 20 минут.\nЗа Team kill нарушителю выдается варн или деморган 30 - 60 минут.\nЗа сбив анимации игроку выдаётся деморган 15 минут.\nЗа использования багоюза +с, выдается деморган 15 минут.. Исключение, гетто.\nЗа ДМ в КПЗ, нарушителю выдается варн.')
+			imgui.End()
+        end
+        if vzaimod.v then
+            local name = sampGetPlayerNickname(vzID)
+            local btn_size = imgui.ImVec2(-0.1, 0)
+            imgui.Begin(u8"Меню взаимодействий",vzaimod,imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
+            imgui.SetCursorPosX((imgui.GetWindowWidth() - 290) / 2)
+            imgui.Text(string.format(u8"Взаимодействие с игроком %s[%s]", name, vzID))
+            imgui.Separator()
+            imgui.Text(u8("Command function"))
+            imgui.BeginChild("##g_sexbar", imgui.ImVec2(370, 187), true, imgui.WindowFlags.NoScrollbar)
+            if imgui.Button(u8'Статистика игрока', btn_size) then
+                lua_thread.create(function()
+                sampSendChat(string.format(u8"/stats %s", vzID))
+                end)
+            end
+            if imgui.Button(u8'Деньги игрока', btn_size) then
+                lua_thread.create(function()
+                sampSendChat(string.format(u8"/money %s", vzID))
+                end)
+            end
+            if imgui.Button(u8'Отправить игрока на спавн', btn_size) then
+                lua_thread.create(function()
+                sampSendChat(string.format(u8"/slap %s", vzID))
+                end)
+            end
+            if imgui.Button(u8'Телепортироваться к игроку', btn_size) then
+                lua_thread.create(function()
+                sampSendChat(string.format(u8"/goto %s", vzID))
+                end)
+            end
+            if imgui.Button(u8'Телепортировать игрока к себе', btn_size) then
+                lua_thread.create(function()
+                sampSendChat(string.format(u8"/gethere %s", vzID))
+                end)
+            end
+            if imgui.Button(u8'Заморозить игрока', btn_size) then
+                lua_thread.create(function()
+                sampSendChat(string.format(u8"/freeze %s", vzID))
+                end)
+            end
+            if imgui.Button(u8'Разаморозить игрока', btn_size) then
+                lua_thread.create(function()
+                sampSendChat(string.format(u8"/unfreeze %s", vzID))
+                end)
+            end
+            imgui.EndChild()
+            imgui.Text(u8("Recon function"))
+            imgui.BeginChild("##g_sear", imgui.ImVec2(370, 155), true, imgui.WindowFlags.NoScrollbar)
+            if imgui.Button(u8'Проверка игрока на АФК без esc', btn_size) then
+                lua_thread.create(function()
+                sampSendChat("/ans ".. vzID .." ".. name .."[".. vzID .."] Вы тут? Ответ в любой чат.")
+                wait(900)
+                sampSendChat("/ans ".. vzID .." ".. name .."[".. vzID .."] Вы тут? Ответ в любой чат.")
+                wait(1000)
+                sampSendChat("/ans ".. vzID .." ".. name .."[".. vzID .."] Вы тут? Ответ в любой чат.")
+                end)
+            end
+            if imgui.Button(u8'ИП игрока', btn_size) then
+                lua_thread.create(function()
+                sampSendChat(string.format(u8"/checkip %s", vzID))
+                end)
+            end
+            if imgui.Button(u8'Выдать игроку здоровье', btn_size) then
+                lua_thread.create(function()
+                sampSendChat("/sethp ".. vzID .." 100")
+                wait(700)
+                sampSendChat("/a [recon] Выдал 100 HP игроку ".. name .."[".. vzID .."]")
+                end)
+            end
+            imgui.EndChild()
+            if imgui.Button(u8'Закрыть',imgui.ImVec2(370,20)) then
+                vzaimod.v = false
+            end
+            imgui.End()
+        end
     end
 end
 
@@ -356,6 +439,7 @@ function main()
     -- Загрузка SAMP --
     if not isSampfuncsLoaded() or not isSampLoaded() then return end
     while not isSampAvailable() do wait(0) end
+    notf.addNotification(string.format("Помощник администратора, включен!\nВерсия скрипта: 0.02", 115, os.date()), 15)
     -- Загрузка SAMP --
 
     -- Проверка Конфигурационных Файлов --
@@ -369,12 +453,12 @@ function main()
 
     -- Команды --
 	sampRegisterChatCommand("amenu", cmd_amenu)
-	sampRegisterChatCommand("afk", cmd_afk)
+    sampRegisterChatCommand("afk", cmd_afk)
     sampRegisterChatCommand(optionsCommand, function(param)
 		if param == "bones" then whVisible = param; nameTagOff()
 		elseif param == "names" or param == "all" then whVisible = param if not nameTag then nameTagOn() end
 		else sampAddChatMessage("{ff0000}[Admin Tools]{FFFFFF} Введите корректный режим: names/bones/all", 0xFF4444FF) end
-	end)
+    end)
 	while not sampIsLocalPlayerSpawned() do wait(100) end
 	if defaultState and not nameTag then nameTagOn() end
     -- Команды --
@@ -385,8 +469,18 @@ function main()
         wait(0)
         if activate == false then return end
 
-        imgui.Process = admin_newmenu.v
+        imgui.Process = admin_newmenu.v or show_admin_prav.v or vzaimod.v
 
+        if isKeyJustPressed(VK_J) then
+            local valid, ped = getCharPlayerIsTargeting(PLAYER_HANDLE)
+            if valid and doesCharExist(ped) then
+                local result, id = sampGetPlayerIdByCharHandle(ped) 
+                if result then 
+                    vzaimod.v = true
+                    vzID = id
+                end
+            end
+        end
         if isKeyJustPressed(key.VK_3) and wasKeyPressed(key.VK_LMENU) then; 
             if defaultState then
                 sampAddChatMessage("{ff0000}[Admin Tools]{FFFFFF} WallHack {ff0000}выключен{ffffff}", 0xFFFFFFFF)
@@ -519,7 +613,7 @@ function sampev.onServerMessage(color, text)
 if text:find("[A]", 1, true) then
     if text:find("/(.*) (.*) (.*)") then
         formacmd, formaid, formatime2 = text:match("/(%S+) (%d+) (%S+)")
-        if formacmd == "kick" or formacmd == "warn" or formacmd == "sethp" or formacmd == "skick" then
+        if formacmd == "kick" or formacmd == "warn" or formacmd == "sethp" or formacmd == "skick" or formacmd == "setskin" then
             formadm = text:match("^%[A%] (%a+_%a+)")
             local one, two = formadm:match("(.).*_(.*)")
             formaadm = ("%s. %s"):format(one, two)
