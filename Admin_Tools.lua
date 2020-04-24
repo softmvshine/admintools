@@ -1,6 +1,6 @@
 script_name("Admin Tools")
 script_author("Lisov AND Rowtea")
-script_version("24.04.2020")
+script_version("23.04.2020")
 
 -- Инклуды --
 local encoding = require 'encoding'
@@ -778,21 +778,20 @@ function autoupdate(json_url, prefix, url)
               lua_thread.create(function(prefix)
                 local dlstatus = require('moonloader').download_status
                 local color = -1
-                sampAddChatMessage((prefix..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion), color)
+                sampAddChatMessage(prefix.."Доступно обновление за дату: "..updateversion..". Обновляю...")
                 wait(250)
                 downloadUrlToFile(updatelink, thisScript().path,
                   function(id3, status1, p13, p23)
-                    if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
-                      print(string.format('Загружено %d из %d.', p13, p23))
                     elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-                      print('Загрузка обновления завершена.')
-                      sampAddChatMessage((prefix..'Обновление завершено!'), color)
+                      sampAddChatMessage((prefix..'Обновление завершено! Скрипт готов к работе!'), color)
                       goupdatestatus = true
                       lua_thread.create(function() wait(500) thisScript():reload() end)
                     end
                     if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
                       if goupdatestatus == nil then
-                        sampAddChatMessage((prefix..'Обновление прошло неудачно. Запускаю устаревшую версию..'), color)
+                        sampAddChatMessage(prefix.."Обновление скрипта не удалось, обновите вручную. Инструкция в Консоли (~)") 
+                        print("Отпишите в вк создателям: vk.com/lisov218 или vk.com/richardski")
+                        activate = false
                         update = false
                       end
                     end
@@ -802,12 +801,14 @@ function autoupdate(json_url, prefix, url)
               )
             else
               update = false
-              print('v'..thisScript().version..': Обновление не требуется.')
+              sampAddChatMessage(prefix.."Дата-Версия скрипта: "..thisScript().version..". Обновление не Требуется", -1)
             end
           end
         else
-          print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..url)
-          update = false
+            sampAddChatMessage(prefix.."Обновление скрипта не удалось, обновите вручную. Инструкция в Консоли (~)") 
+            print("Отпишите в вк создателям: vk.com/lisov218 или vk.com/richardski")
+            activate = false
+            update = false
         end
       end
     end
