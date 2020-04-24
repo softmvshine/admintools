@@ -1,8 +1,8 @@
 script_name("Admin Tools")
 script_author("Lisov AND Rowtea")
-script_version("23.04.2020")
+script_version("24.04.2020")
 
--- Р пїЅР Р…Р С”Р В»РЎС“Р Т‘РЎвЂ№ --
+-- Инклуды --
 local encoding = require 'encoding'
 local sampev = require 'samp.events'
 local key = require 'vkeys'
@@ -11,10 +11,10 @@ local encoding = require 'encoding'
 encoding.default = 'CP1251'
 u8 = encoding.UTF8
 local notf = import 'lib/imgui_notf.lua'
--- Р пїЅР Р…Р С”Р В»РЎС“Р Т‘РЎвЂ№ --
+-- Инклуды --
 
-local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED) -- РЎРѓР Р†Р С•Р в„– id.
-local names = sampGetPlayerNickname(playerid) -- РЎРѓР Р†Р С•Р в„– Р Р…Р С‘Р С”.
+local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED) -- свой id.
+local names = sampGetPlayerNickname(playerid) -- свой ник.
 
 whVisible = "all"
 optionsCommand = "settingswh"
@@ -27,11 +27,11 @@ require "lib.moonloader"
 local mem = require "memory"
 local citem = imgui.ImInt(0)
 
--- Р СџР ВµРЎР‚Р ВµР СР ВµР Р…Р Р…РЎвЂ№Р Вµ --
+-- Переменные --
 local activate = false
 imgui.Process = false
 
--- Р С’Р Т‘Р СР С‘Р Р…РЎРѓР С”Р С‘Р Вµ Р С—Р ВµРЎР‚Р ВµР СР ВµР Р…Р Р…РЎвЂ№Р Вµ --
+-- Админские переменные --
 local forma = false
 local formb = false
 local formc = false
@@ -45,7 +45,7 @@ local show_admin_info = imgui.ImBool(false)
 local new_report = false
 local user_report_name = nil
 local user_report_id = nil
--- Р СџР ВµРЎР‚Р ВµР СР ВµР Р…Р Р…РЎвЂ№Р Вµ --
+-- Переменные --
 
 local color = 0x00FFFF
 
@@ -65,7 +65,7 @@ local tCarsName = {"Landstalker", "Bravura", "Buffalo", "Linerunner", "Perrenial
 "Tug", "Trailer", "Emperor", "Wayfarer", "Euros", "Hotdog", "Club", "FreightBox", "Trailer", "Andromada", "Dodo", "RCCam", "Launch", "PoliceCar", "PoliceCar",
 "PoliceCar", "PoliceRanger", "Picador", "S.W.A.T", "Alpha", "Phoenix", "GlendaleShit", "SadlerShit", "Luggage A", "Luggage B", "Stairs", "Boxville", "Tiller",
 "UtilityTrailer"}
-local tCarsTypeName = {"Р С’Р Р†РЎвЂљР С•Р СР С•Р В±Р С‘Р В»РЎРЉ", "Р СљР С•РЎвЂљР С•Р С‘РЎвЂ Р С‘Р С”Р В»", "Р вЂ™Р ВµРЎР‚РЎвЂљР С•Р В»РЎвЂРЎвЂљ", "Р РЋР В°Р СР С•Р В»РЎвЂРЎвЂљ", "Р СџРЎР‚Р С‘РЎвЂ Р ВµР С—", "Р вЂєР С•Р Т‘Р С”Р В°", "Р вЂќРЎР‚РЎС“Р С–Р С•Р Вµ", "Р СџР С•Р ВµР В·Р Т‘", "Р вЂ™Р ВµР В»Р С•РЎРѓР С‘Р С—Р ВµР Т‘"}
+local tCarsTypeName = {"Автомобиль", "Мотоицикл", "Вертолёт", "Самолёт", "Прицеп", "Лодка", "Другое", "Поезд", "Велосипед"}
 local tCarsSpeed = {43, 40, 51, 30, 36, 45, 30, 41, 27, 43, 36, 61, 46, 30, 29, 53, 42, 30, 32, 41, 40, 42, 38, 27, 37,
 54, 48, 45, 43, 55, 51, 36, 26, 30, 46, 0, 41, 43, 39, 46, 37, 21, 38, 35, 30, 45, 60, 35, 30, 52, 0, 53, 43, 16, 33, 43,
 29, 26, 43, 37, 48, 43, 30, 29, 14, 13, 40, 39, 40, 34, 43, 30, 34, 29, 41, 48, 69, 51, 32, 38, 51, 20, 43, 34, 18, 27,
@@ -171,141 +171,141 @@ function imgui.OnDrawFrame()
             local btn_size = imgui.ImVec2(-0.1, 0)
         	imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
         	imgui.SetNextWindowSize(imgui.ImVec2(800, 400), imgui.Cond.FirstUseEver)
-        	imgui.Begin(u8"Admin Tools | Р вЂњР В»Р В°Р Р†Р Р…Р С•Р Вµ Р СР ВµР Р…РЎР‹", admin_newmenu, imgui.WindowFlags.NoResize + imgui.WindowFlags.ShowBorders + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
+        	imgui.Begin(u8"Admin Tools | Главное меню", admin_newmenu, imgui.WindowFlags.NoResize + imgui.WindowFlags.ShowBorders + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
             imgui.BeginChild('left', imgui.ImVec2(200, 0), true) 
 		
 	
         if not selected then selected = 1 end
-            if imgui.Selectable(u8'Р пїЅР Р…РЎвЂћР С•РЎР‚Р СР В°РЎвЂ Р С‘РЎРЏ', false) then selected = 1 end
-            if imgui.Selectable(u8'Р РЋР С—Р С‘РЎРѓР С•Р С” Р С”Р С•Р СР В°Р Р…Р Т‘', false) then selected = 2 end
-			if imgui.Selectable(u8'Р С›РЎРѓР Р…Р С•Р Р†Р Р…РЎвЂ№Р Вµ РЎвЂћРЎС“Р Р…Р С”РЎвЂ Р С‘Р С‘', false) then selected = 3 end
-            if imgui.Selectable(u8'Р СћР ВµР В»Р ВµР С—Р С•РЎР‚РЎвЂљР В°РЎвЂ Р С‘РЎРЏ', false) then selected = 4 end
-            if imgui.Selectable(u8'Р СљР ВµРЎР‚Р С•Р С—РЎР‚Р С‘РЎРЏРЎвЂљР С‘РЎРЏ', false) then selected = 5 end
-			if imgui.Selectable(u8'Р СњР В°РЎРѓРЎвЂљРЎР‚Р С•Р в„–Р С”Р С‘ РЎРѓР С”РЎР‚Р С‘Р С—РЎвЂљР В°', false) then selected = 6 end
-            if imgui.Selectable(u8'Р С› РЎРѓР С”РЎР‚Р С‘Р С—РЎвЂљР Вµ', false) then selected = 7 end
+            if imgui.Selectable(u8'Информация', false) then selected = 1 end
+            if imgui.Selectable(u8'Список команд', false) then selected = 2 end
+			if imgui.Selectable(u8'Основные функции', false) then selected = 3 end
+            if imgui.Selectable(u8'Телепортация', false) then selected = 4 end
+            if imgui.Selectable(u8'Мероприятия', false) then selected = 5 end
+			if imgui.Selectable(u8'Настройки скрипта', false) then selected = 6 end
+            if imgui.Selectable(u8'О скрипте', false) then selected = 7 end
             imgui.EndChild()
             imgui.SameLine()
 
 			imgui.BeginChild('right', imgui.ImVec2(0, 0), true)
             if selected == 1 then
-			imgui.Text(u8('Р пїЅР Р…РЎвЂћР С•РЎР‚Р СР В°РЎвЂ Р С‘РЎРЏ / Р С’Р Р†РЎвЂљР С•РЎР‚РЎвЂ№ РЎРѓР С”Р С‘Р С—РЎвЂљР В°: Fernando Miracle | Marchionne Rowtea'))
+			imgui.Text(u8('Информация / Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
 			imgui.Separator()
-			if imgui.Button(u8'Р СџРЎР‚Р В°Р Р†Р С‘Р В»Р В° Р Р…Р В°Р С”Р В°Р В·Р В°Р Р…Р С‘Р в„–', btn_size) then
+			if imgui.Button(u8'Правила наказаний', btn_size) then
                 show_admin_prav.v = not show_admin_prav.v
                 imgui.Process = show_admin_prav.v
             end
 		end	
 		if selected == 2 then
-			imgui.Text(u8('Р РЋР С—Р С‘РЎРѓР С•Р С” Р С”Р С•Р СР В°Р Р…Р Т‘ / Р С’Р Р†РЎвЂљР С•РЎР‚РЎвЂ№ РЎРѓР С”Р С‘Р С—РЎвЂљР В°: Fernando Miracle | Marchionne Rowtea'))
+			imgui.Text(u8('Список команд / Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
 			imgui.Separator()
-			imgui.Text(u8('/afk [ID Р С‘Р С–РЎР‚Р С•Р С”Р В°] -- Р С›Р С—РЎР‚Р В°РЎв‚¬Р С‘Р Р†Р В°Р ВµРЎвЂљ Р С‘Р С–РЎР‚Р С•Р С”Р В° Р Р…Р В° Р С’Р В¤Р С™ Р В±Р ВµР В· esc.'))
+			imgui.Text(u8('/afk [ID игрока] -- Опрашивает игрока на АФК без esc.'))
 		  end
 		if selected == 3 then
-			imgui.Text(u8('Р С›РЎРѓР Р…Р С•Р Р†Р Р…РЎвЂ№Р Вµ РЎвЂћРЎС“Р Р…Р С”РЎвЂ Р С‘Р С‘ / Р С’Р Р†РЎвЂљР С•РЎР‚РЎвЂ№ РЎРѓР С”Р С‘Р С—РЎвЂљР В°: Fernando Miracle | Marchionne Rowtea'))
+			imgui.Text(u8('Основные функции / Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
 			imgui.Separator()
-			if imgui.CollapsingHeader(u8'Р РЋР С•Р С•Р В±РЎвЂ°Р ВµР Р…Р С‘РЎРЏ /msg') then
-							if imgui.Button(u8'Р пїЅР Р…РЎвЂћР С•РЎР‚Р СР В°РЎвЂ Р С‘РЎРЏ Р Р† /msg', btn_size) then
+			if imgui.CollapsingHeader(u8'Сообщения /msg') then
+							if imgui.Button(u8'Информация в /msg', btn_size) then
 							lua_thread.create(function()
-							sampSendChat("/msg Р вЂќР С•РЎР‚Р С•Р С–Р С‘Р Вµ Р Т‘РЎР‚РЎС“Р В·РЎРЉРЎРЏ, Р Р†РЎРѓРЎвЂљРЎС“Р С—Р В°Р в„–РЎвЂљР Вµ Р Р† Р Р…Р В°РЎв‚¬ Р Т‘РЎР‚РЎС“Р В¶Р ВµР В»РЎР‹Р В±Р Р…РЎвЂ№Р в„– Discord - discord.gg/Tr4F9mu")
+							sampSendChat("/msg Дорогие друзья, вступайте в наш дружелюбный Discord - discord.gg/Tr4F9mu")
 							wait(1000)
-							sampSendChat("/msg Р СњР В°РЎв‚¬ РЎРѓР В°Р в„–РЎвЂљ - samp-states.ru / Р СњР В°РЎв‚¬Р В° Р С–РЎР‚РЎС“Р С—Р С—Р В° - vk.com/sampstatesrp")
+							sampSendChat("/msg Наш сайт - samp-states.ru / Наша группа - vk.com/sampstatesrp")
 							wait(1000)
-							sampSendChat("/msg Р СџР С•РЎРѓР ВµРЎвЂљР С‘РЎвЂљР Вµ Р Р…Р В°РЎв‚¬РЎС“ Р С‘Р Р…РЎвЂћР С•РЎР‚Р СР В°РЎвЂ Р С‘Р С•Р Р…Р Р…РЎС“РЎР‹ Р С–РЎР‚РЎС“Р С—Р С—РЎС“ Р С—Р С• Р В°Р Т‘РЎР‚Р ВµРЎРѓРЎС“ - vk.com/news.statesrp")
+							sampSendChat("/msg Посетите нашу информационную группу по адресу - vk.com/news.statesrp")
 							wait(1000)
-							sampSendChat("/msg Р СњР В° РЎвЂћР С•РЎР‚РЎС“Р СР Вµ Р СР С•Р В¶Р ВµРЎвЂљР Вµ Р С•РЎвЂћР С•РЎР‚Р СР С‘РЎвЂљРЎРЉ РЎРѓР ВµР В±Р Вµ Р С’Р СР Р…Р С‘РЎРѓРЎвЂљР С‘РЎР‹ 'Р В¤Р С•РЎР‚РЎС“Р С - Р С™РЎС“РЎР‚Р С‘Р В»Р С”Р В° - Р С’Р СР Р…Р С‘РЎРѓРЎвЂљР С‘РЎРЏ'.")
+							sampSendChat("/msg На форуме можете оформить себе Амнистию 'Форум - Курилка - Амнистия'.")
 							wait(1000)
-							sampSendChat("/msg Р СџР ВµРЎР‚Р ВµР в„–РЎвЂљР С‘ Р Р…Р В° Р Р…Р В°РЎв‚¬ РЎвЂћР С•РЎР‚РЎС“Р С Р Р†РЎвЂ№ Р СР С•Р В¶Р ВµРЎвЂљР Вµ Р С—Р С• РЎРѓРЎРѓРЎвЂ№Р В»Р С”Р Вµ - forum.samp-states.ru")
+							sampSendChat("/msg Перейти на наш форум вы можете по ссылке - forum.samp-states.ru")
 							wait(1000)
-							sampSendChat("/msg Р СњР В° РЎРЊРЎвЂљР С•Р С Р С‘Р Р…РЎвЂћР С•РЎР‚Р СР В°РЎвЂ Р С‘РЎРЏ Р В·Р В°Р С”Р С•Р Р…РЎвЂЎР С‘Р В»Р В°РЎРѓРЎРЉ. Р СџРЎР‚Р С‘РЎРЏРЎвЂљР Р…Р С•Р в„– Р пїЅР С–РЎР‚РЎвЂ№ Р Р…Р В° States Role Play :-)")
+							sampSendChat("/msg На этом информация закончилась. Приятной Игры на States Role Play :-)")
 							end)
 						end
-						if imgui.Button(u8'Р пїЅР Р…РЎвЂћР С•РЎР‚Р СР В°РЎвЂ Р С‘РЎРЏ Р С• /spwancars', btn_size) then
+						if imgui.Button(u8'Информация о /spwancars', btn_size) then
 						lua_thread.create(function()
-						sampSendChat("/msg Р Р€Р Р†Р В°Р В¶Р В°Р ВµР СРЎвЂ№Р Вµ Р пїЅР С–РЎР‚Р С•Р С”Р С‘! Р В§Р ВµРЎР‚Р ВµР В· 30 РЎРѓР ВµР С”РЎС“Р Р…Р Т‘ Р С—РЎР‚Р С•Р С‘Р В·Р С•Р в„–Р Т‘РЎвЂРЎвЂљ РЎР‚Р ВµРЎРѓР С—Р В°Р Р†Р Р… РЎвЂљРЎР‚Р В°Р Р…РЎРѓР С—Р С•РЎР‚РЎвЂљР В°! Р вЂ”Р В°Р в„–Р СР С‘РЎвЂљР Вµ Р СР В°РЎв‚¬Р С‘Р Р…РЎвЂ№")
+						sampSendChat("/msg Уважаемые Игроки! Через 30 секунд произойдёт респавн транспорта! Займите машины")
 						wait(30000)
 						sampSendChat("/spawncars")
 					end)
 				end
-				if imgui.Button(u8'Р вЂ“Р Т‘Р ВµР С Р Р†Р В°РЎв‚¬Р С‘РЎвЂ¦ РЎР‚Р ВµР С—Р С•РЎР‚РЎвЂљР С•Р Р† (msg)', btn_size) then
-				sampSendChat("/msg Р Р€Р Р†Р В°Р В¶Р В°Р ВµР СРЎвЂ№Р Вµ Р С‘Р С–РЎР‚Р С•Р С”Р С‘, Р В°Р Т‘Р СР С‘Р Р…Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘РЎРЏ Р В¶Р Т‘Р ВµРЎвЂљ Р Р†Р В°РЎв‚¬Р С‘РЎвЂ¦ РЎР‚Р ВµР С—Р С•РЎР‚РЎвЂљР С•Р Р† - /report.")
+				if imgui.Button(u8'Ждем ваших репортов (msg)', btn_size) then
+				sampSendChat("/msg Уважаемые игроки, администрация ждет ваших репортов - /report.")
 				end
 			end
-			if imgui.CollapsingHeader(u8'Р СљР ВµРЎР‚Р С•Р С—РЎР‚Р С‘РЎРЏРЎвЂљР С‘Р Вµ') then
-				if imgui.Button(u8'Р СџРЎР‚РЎРЏРЎвЂљР С”Р С‘', btn_size) then
-					sampSendChat("/msg Р Р€Р Р†Р В°Р В¶Р В°Р ВµР СРЎвЂ№Р Вµ Р С‘Р С–РЎР‚Р С•Р С”Р С‘ Р С—РЎР‚Р С•РЎвЂ¦Р С•Р Т‘Р С‘РЎвЂљ Р СР ВµРЎР‚Р С•Р С—РЎР‚Р С‘РЎРЏРЎвЂљР С‘Р Вµ 'Р СџРЎР‚РЎРЏРЎвЂљР С”Р С‘', Р В¶Р ВµР В»Р В°РЎР‹РЎвЂ°Р С‘Р Вµ - /gotomp")
+			if imgui.CollapsingHeader(u8'Мероприятие') then
+				if imgui.Button(u8'Прятки', btn_size) then
+					sampSendChat("/msg Уважаемые игроки проходит мероприятие 'Прятки', желающие - /gotomp")
 					end
-					if imgui.Button(u8'Р С™Р С•РЎР‚Р С•Р В»РЎРЉ Р вЂќР С‘Р С–Р В»Р В°', btn_size) then
-					sampSendChat("/msg Р Р€Р Р†Р В°Р В¶Р В°Р ВµР СРЎвЂ№Р Вµ Р С‘Р С–РЎР‚Р С•Р С”Р С‘ Р С—РЎР‚Р С•РЎвЂ¦Р С•Р Т‘Р С‘РЎвЂљ Р СР ВµРЎР‚Р С•Р С—РЎР‚Р С‘РЎРЏРЎвЂљР С‘Р Вµ 'Р С™Р С•РЎР‚Р С•Р В»РЎРЉ Р вЂќР С‘Р С–Р В»Р В°', Р В¶Р ВµР В»Р В°РЎР‹РЎвЂ°Р С‘Р Вµ - /gotomp")
+					if imgui.Button(u8'Король Дигла', btn_size) then
+					sampSendChat("/msg Уважаемые игроки проходит мероприятие 'Король Дигла', желающие - /gotomp")
 					end
-					if imgui.Button(u8'Р СџР С•Р В»Р С‘Р Р†Р В°Р В»Р С”Р В°', btn_size) then
-					sampSendChat("/msg Р Р€Р Р†Р В°Р В¶Р В°Р ВµР СРЎвЂ№Р Вµ Р С‘Р С–РЎР‚Р С•Р С”Р С‘ Р С—РЎР‚Р С•РЎвЂ¦Р С•Р Т‘Р С‘РЎвЂљ Р СР ВµРЎР‚Р С•Р С—РЎР‚Р С‘РЎРЏРЎвЂљР С‘Р Вµ 'Р СџР С•Р В»Р С‘Р Р†Р В°Р В»Р С”Р В°', Р В¶Р ВµР В»Р В°РЎР‹РЎвЂ°Р С‘Р Вµ - /gotomp")
+					if imgui.Button(u8'Поливалка', btn_size) then
+					sampSendChat("/msg Уважаемые игроки проходит мероприятие 'Поливалка', желающие - /gotomp")
 					end
-					if imgui.Button(u8'Р В РЎС“РЎРѓРЎРѓР С”Р В°РЎРЏ Р В РЎС“Р В»Р ВµРЎвЂљР С”Р В°', btn_size) then
-					sampSendChat("/msg Р Р€Р Р†Р В°Р В¶Р В°Р ВµР СРЎвЂ№Р Вµ Р С‘Р С–РЎР‚Р С•Р С”Р С‘ Р С—РЎР‚Р С•РЎвЂ¦Р С•Р Т‘Р С‘РЎвЂљ Р СР ВµРЎР‚Р С•Р С—РЎР‚Р С‘РЎРЏРЎвЂљР С‘Р Вµ 'Р В РЎС“РЎРѓРЎРѓР С”Р В°РЎРЏ Р В РЎС“Р В»Р ВµРЎвЂљР С”Р В°', Р В¶Р ВµР В»Р В°РЎР‹РЎвЂ°Р С‘Р Вµ - /gotomp")
+					if imgui.Button(u8'Русская Рулетка', btn_size) then
+					sampSendChat("/msg Уважаемые игроки проходит мероприятие 'Русская Рулетка', желающие - /gotomp")
 					end
 			end
-			if imgui.CollapsingHeader(u8'Р вЂєР С‘Р Т‘Р ВµРЎР‚РЎРѓРЎвЂљР Р†Р С•') then
-				if imgui.Button(u8'Р СњР С•Р Р†РЎвЂ№Р в„– Р В»Р С‘Р Т‘Р ВµРЎР‚', btn_size) then
+			if imgui.CollapsingHeader(u8'Лидерство') then
+				if imgui.Button(u8'Новый лидер', btn_size) then
 					sampSetChatInputEnabled(true)
-					  sampSetChatInputText("/msg Р СњР С•Р Р†РЎвЂ№Р в„– Р В»Р С‘Р Т‘Р ВµРЎР‚ Р С•РЎР‚Р С–Р В°Р Р…Р С‘Р В·Р В°РЎвЂ Р С‘Р С‘ 'РЎвЂћРЎР‚Р В°Р С”' - nickname")
+					  sampSetChatInputText("/msg Новый лидер организации 'фрак' - nickname")
 					end
-					if imgui.Button(u8'Р РЋР Р…РЎРЏРЎвЂљР С‘Р Вµ Р В»Р С‘Р Т‘Р ВµРЎР‚Р В°', btn_size) then
+					if imgui.Button(u8'Снятие лидера', btn_size) then
 					sampSetChatInputEnabled(true)
-					  sampSetChatInputText("/msg Р вЂєР С‘Р Т‘Р ВµРЎР‚ Р С•РЎР‚Р С–Р В°Р Р…Р С‘Р В·Р В°РЎвЂ Р С‘Р С‘ 'РЎвЂћРЎР‚Р В°Р С”' nickname, Р В±РЎвЂ№Р В» РЎРѓР Р…РЎРЏРЎвЂљ РЎРѓ Р С—Р С•РЎРѓРЎвЂљР В°.")
+					  sampSetChatInputText("/msg Лидер организации 'фрак' nickname, был снят с поста.")
 					end
-					if imgui.Button(u8'Р РЋРЎР‚Р С•Р С” Р В»Р С‘Р Т‘Р ВµРЎР‚РЎРѓРЎвЂљР Р†Р В°', btn_size) then
+					if imgui.Button(u8'Срок лидерства', btn_size) then
 					sampSetChatInputEnabled(true)
-					  sampSetChatInputText("/msg Р вЂєР С‘Р Т‘Р ВµРЎР‚ Р С•РЎР‚Р С–Р В°Р Р…Р С‘Р В·Р В°РЎвЂ Р С‘Р С‘ 'РЎвЂћРЎР‚Р В°Р С”' - nickname, РЎС“РЎРѓР С—Р ВµРЎв‚¬Р Р…Р С• Р С•РЎвЂљРЎРѓРЎвЂљР С•РЎРЏР В» РЎРѓРЎР‚Р С•Р С”.")
+					  sampSetChatInputText("/msg Лидер организации 'фрак' - nickname, успешно отстоял срок.")
 				end
 			end
 		end
 		if selected == 4 then
-			imgui.Text(u8('Р СћР ВµР В»Р ВµР С—Р С•РЎР‚РЎвЂљР В°РЎвЂ Р С‘РЎРЏ / Р С’Р Р†РЎвЂљР С•РЎР‚РЎвЂ№ РЎРѓР С”Р С‘Р С—РЎвЂљР В°: Fernando Miracle | Marchionne Rowtea'))
+			imgui.Text(u8('Телепортация / Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
 			imgui.Separator()
-			if imgui.CollapsingHeader(u8'Р С›Р В±РЎвЂ°Р ВµРЎРѓРЎвЂљР Р†Р ВµР Р…Р Р…РЎвЂ№Р Вµ Р СљР ВµРЎРѓРЎвЂљР В°') then
-		        if imgui.Button(u8'Р С’Р Р†РЎвЂљР С•Р Р†Р С•Р С”Р В·Р В°Р В»', btn_size) then
+			if imgui.CollapsingHeader(u8'Общественные Места') then
+		        if imgui.Button(u8'Автовокзал', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1763.1560058594, -1896.3155517578, 13.560709953308)
 		        end
-		        if imgui.Button(u8'Р СљРЎРЊРЎР‚Р С‘РЎРЏ', btn_size) then
+		        if imgui.Button(u8'Мэрия', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1477.7521972656, -1738.6071777344, 13.546875)
 		        end
-		        if imgui.Button(u8'Р вЂР В°Р Р…Р С”', btn_size) then
+		        if imgui.Button(u8'Банк', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1576.1254882813, -1327.3795166016, 16.484375)
 		        end
-		        if imgui.Button(u8'Р вЂ™Р В°Р в„–Р Р…Р вЂ™РЎС“Р Т‘', btn_size) then
+		        if imgui.Button(u8'ВайнВуд', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1447.4411621094, -783.56854248047, 93.964134216309)
 		        end
-		        if imgui.Button(u8'Р С™Р В°Р В·Р С‘Р Р…Р С•', btn_size) then
+		        if imgui.Button(u8'Казино', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1021.2512207031, -1129.4576416016, 23.867818832397)
 		        end
 		    end
-		    if imgui.CollapsingHeader(u8'Р вЂњР С•РЎРѓРЎС“Р Т‘Р В°РЎР‚РЎРѓРЎвЂљР Р†Р ВµР Р…Р Р…РЎвЂ№Р Вµ Р РЋРЎвЂљРЎР‚РЎС“Р С”РЎвЂљРЎС“РЎР‚РЎвЂ№') then
-		        if imgui.Button(u8'Р СџРЎР‚Р В°Р Р†Р С‘РЎвЂљР ВµР В»РЎРЉРЎРѓРЎвЂљР Р†Р С•', btn_size) then
+		    if imgui.CollapsingHeader(u8'Государственные Структуры') then
+		        if imgui.Button(u8'Правительство', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1481.0541, -1743.6437, 13.5469)
 		        end
-		        if imgui.Button(u8'Р СџР С•Р В»Р С‘РЎвЂ Р С‘РЎРЏ', btn_size) then
+		        if imgui.Button(u8'Полиция', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1548.2714, -1675.6670, 14.4509)
 		        end
-		        if imgui.Button(u8'Р СџР С•Р В»Р С‘РЎвЂ Р С‘РЎРЏ(Р вЂњР В°РЎР‚Р В°Р В¶)', btn_size) then
+		        if imgui.Button(u8'Полиция(Гараж)', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1575.0139, -1696.7513, 6.2188)
 		        end
 		        if imgui.Button(u8'FBI', btn_size) then
 		            setCharCoordinates(PLAYER_PED, -2436.6685, 507.1047, 29.9308)
 		        end
-		        if imgui.Button(u8'Р вЂР С•Р В»РЎРЉР Р…Р С‘РЎвЂ Р В°', btn_size) then
+		        if imgui.Button(u8'Больница', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1181.7573, -1323.5408, 13.5824)
 		        end
-		        if imgui.Button(u8'Р РЋР СљР пїЅ', btn_size) then
+		        if imgui.Button(u8'СМИ', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 430.2165, -1787.6193, 5.6046)
 		        end
-		        if imgui.Button(u8'Р С’РЎР‚Р СР С‘РЎРЏ', btn_size) then
+		        if imgui.Button(u8'Армия', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 219.1929, 1902.0972, 17.6406)
 		        end
-		        if imgui.Button(u8'Р С’Р Р†РЎвЂљР С•РЎв‚¬Р С”Р С•Р В»Р В°', btn_size) then
+		        if imgui.Button(u8'Автошкола', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1160.6288, -1186.3669, 20.0469)
 		        end
 		    end
-		    if imgui.CollapsingHeader(u8'Р СџРЎР‚Р ВµРЎРѓРЎвЂљРЎС“Р С—Р Р…РЎвЂ№Р Вµ РЎРѓРЎвЂљРЎР‚РЎС“Р С”РЎвЂљРЎС“РЎР‚РЎвЂ№') then
+		    if imgui.CollapsingHeader(u8'Преступные структуры') then
 		        if imgui.Button(u8'LCN', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 1040.8848876953, 1066.1143798828, 10.170858383179)
 		        end
@@ -316,7 +316,7 @@ function imgui.OnDrawFrame()
 		            setCharCoordinates(PLAYER_PED, 1462.2647705078, 2788.2216796875, 10.8203125)
 		        end
 		    end
-		    if imgui.CollapsingHeader(u8'Р СњР ВµР В»Р ВµР С–Р В°Р В»РЎРЉР Р…РЎвЂ№Р Вµ РЎРѓРЎвЂљРЎР‚РЎС“Р С”РЎвЂљРЎС“РЎР‚РЎвЂ№') then
+		    if imgui.CollapsingHeader(u8'Нелегальные структуры') then
 		        if imgui.Button(u8'Ballas', btn_size) then
 		            setCharCoordinates(PLAYER_PED, 2000.8017578125, -1127.4362792969, 25.484676361084)
 		        end
@@ -336,24 +336,24 @@ function imgui.OnDrawFrame()
         end
         if selected == 5 then
             local gids = {24,31}
-            local gnames ={u8"Р СњР Вµ Р Р†РЎвЂ№Р В±РЎР‚Р В°Р Р…Р С•", u8"Р СџР С•Р В»Р С‘Р Р†Р В°Р В»Р С”Р В°", u8"Р С™Р С•РЎР‚Р С•Р В»РЎРЉ Р вЂќР С‘Р С–Р В»Р В°"}
+            local gnames ={u8"Не выбрано", u8"Поливалка", u8"Король Дигла"}
             imgui.PushItemWidth(190)
-            imgui.Combo(u8"Р вЂ™РЎвЂ№Р В±Р ВµРЎР‚Р С‘РЎвЂљР Вµ Р СљР ВµРЎР‚Р С•Р С—РЎР‚Р С‘РЎРЏРЎвЂљР С‘Р Вµ", citem, gnames)
+            imgui.Combo(u8"Выберите Мероприятие", citem, gnames)
             imgui.PushItemWidth(190)
             imgui.InputInt()
             imgui.Separator()
             imgui.inputInt()
         end
 		if selected == 6 then
-			imgui.Text(u8('Р СњР В°РЎРѓРЎвЂљРЎР‚Р С•Р в„–Р С”Р С‘ РЎРѓР С”РЎР‚Р С‘Р С—РЎвЂљР В° / Р С’Р Р†РЎвЂљР С•РЎР‚РЎвЂ№ РЎРѓР С”Р С‘Р С—РЎвЂљР В°: Fernando Miracle | Marchionne Rowtea'))
+			imgui.Text(u8('Настройки скрипта / Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
 			imgui.Separator()	
-			imgui.Text(u8('Р СњР В°Р В·Р Р†Р В°Р Р…Р С‘Р Вµ\t\t\t\t\t\t\t\t\t\t\t\tР С’Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ'))
+			imgui.Text(u8('Название\t\t\t\t\t\t\t\t\t\t\t\tАктивация'))
 			imgui.Text(u8('WallHack\t\t\t\t\t\t\t\t\t\t\t\t ALT+3(/settingswh)'))
         end
 		if selected == 7 then
-			imgui.Text(u8('Р С› РЎРѓР С”РЎР‚Р С‘Р С—РЎвЂљР Вµ'))
+			imgui.Text(u8('О скрипте'))
 			imgui.Separator()	
-			imgui.Text(u8('Р С’Р Р†РЎвЂљР С•РЎР‚РЎвЂ№ РЎРѓР С”Р С‘Р С—РЎвЂљР В°: Fernando Miracle | Marchionne Rowtea'))
+			imgui.Text(u8('Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
 			imgui.PushItemWidth(530)
             if imgui.Button(u8'Fernando Miracle (VK)') then
                 os.execute('explorer "https://vk.com/lisov218"')
@@ -364,8 +364,8 @@ function imgui.OnDrawFrame()
                 os.execute('explorer "https://vk.com/richardski"')
 			end
 			imgui.SameLine()
-			imgui.TextQuestion(u8'Р вЂ™Р Р…Р С‘Р СР В°Р Р…Р С‘Р Вµ Р С•РЎвЂљР С”РЎР‚Р С•Р ВµРЎвЂљРЎРѓРЎРЏ Р Р†Р В°РЎв‚¬ Р В±РЎР‚Р В°РЎС“Р В·Р ВµРЎР‚, Р С”Р С•РЎвЂљР С•РЎР‚РЎвЂ№Р в„– РЎРѓРЎвЂљР С•Р С‘РЎвЂљ Р С—Р С• РЎС“Р СР С•Р В»РЎвЂЎР В°Р Р…Р С‘РЎР‹!')
-			imgui.Text(u8('Р Р€Р Р†Р В°Р В¶Р В°Р ВµР СРЎвЂ№Р в„– Р В°Р Т‘Р СР С‘Р Р…Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂљР С•РЎР‚, Р ВµРЎРѓР В»Р С‘ Р Р†РЎвЂ№ Р Р…Р В°РЎв‚¬Р В»Р С‘ Р В±Р В°Р С–/Р С•РЎв‚¬Р С‘Р В±Р С”РЎС“ Р С•РЎвЂљР С—Р С‘РЎв‚¬Р С‘РЎвЂљР Вµ Р С•Р Т‘Р Р…Р С•Р СРЎС“ Р С‘Р В· Р В°Р Р†РЎвЂљР С•РЎР‚Р С•Р Р† РЎРѓР С”РЎР‚Р С‘Р С—РЎвЂљР В°.'))
+			imgui.TextQuestion(u8'Внимание откроется ваш браузер, который стоит по умолчанию!')
+			imgui.Text(u8('Уважаемый администратор, если вы нашли баг/ошибку отпишите одному из авторов скрипта.'))
 		end
 			imgui.EndChild()
 			imgui.End()
@@ -377,49 +377,54 @@ function imgui.OnDrawFrame()
 		    imgui.SetNextWindowSize(imgui.ImVec2(1190, 400), imgui.Cond.FirstUseEver)
 		    imgui.Begin(u8'', show_admin_prav, imgui.WindowFlags.NoResize + imgui.WindowFlags.ShowBorders + imgui.WindowFlags.NoCollapse)
 		    local btn_size = imgui.ImVec2(-0.1, 0)
-			imgui.Text(u8'Р СњР В°Р С”Р В°Р В·Р В°Р Р…Р С‘Р Вµ Р вЂР В°Р Р…:\nР пїЅР С–РЎР‚Р С•Р С”Р В°Р С Р В·Р В°Р С—РЎР‚Р ВµРЎвЂ°Р ВµР Р…Р С• Р С‘РЎРѓР С—Р С•Р В»РЎРЉР В·Р С•Р Р†Р В°РЎвЂљРЎРЉ Р С—Р С•РЎРѓРЎвЂљР С•РЎР‚Р С•Р Р…Р Р…Р С‘Р Вµ РЎвЂЎР С‘РЎвЂљ-Р С—РЎР‚Р С•Р С–РЎР‚Р В°Р СР СРЎвЂ№, Р С—РЎР‚Р С•Р С–РЎР‚Р В°Р СР СРЎвЂ№ Р Р†Р В·Р В»Р С•Р СР В° Р С‘Р С–РЎР‚Р С•Р Р†Р С•Р С–Р С• РЎвЂћРЎС“Р Р…Р С”РЎвЂ Р С‘Р С•Р Р…Р В°Р В»Р В°. Р СњР В°Р С”Р В°Р В·Р В°Р Р…Р С‘Р Вµ: Р В±Р В°Р Р… 30 Р Т‘Р Р…Р ВµР в„–.\nР пїЅРЎРѓР С—Р С•Р В»РЎРЉР В·Р С•Р Р†Р В°Р Р…Р С‘Р Вµ / РЎвЂ¦РЎР‚Р В°Р Р…Р ВµР Р…Р С‘Р Вµ Р В·Р В°Р С—РЎР‚Р ВµРЎвЂ°РЎвЂР Р…Р Р…РЎвЂ№РЎвЂ¦ РЎвЂЎР С‘РЎвЂљР ВµРЎР‚РЎРѓР С”Р С‘РЎвЂ¦ Р С—РЎР‚Р С•Р С–РЎР‚Р В°Р СР С: Aim, Speed Hack, Wall Hack, Fly, DGun, Cleo HP, Autorepair/GM Car, Airbreak, Fast Gan, Р В Р Р†Р В°Р Р…Р С”Р В° Р РЋР С•Р В±Р ВµР в„–РЎвЂљ - Р С•РЎвЂљ 10 Р Т‘Р С• 30 Р Т‘Р Р…Р ВµР в„–\nР Р€Р С—Р С•Р СР С‘Р Р…Р В°Р Р…Р С‘Р Вµ РЎР‚Р С•Р Т‘Р Р…РЎвЂ№РЎвЂ¦ /Р С›РЎРѓР С”Р С•РЎР‚Р В±Р В»Р ВµР Р…Р С‘Р Вµ Р Р† Р Р…Р С‘Р С”Р Вµ - 30 Р Т‘Р Р…Р ВµР в„– Р В±Р В°Р Р…Р В°.\nР С›РЎРѓР С”Р С•РЎР‚Р В±Р В»Р ВµР Р…Р С‘Р Вµ РЎР‚Р С•Р Т‘Р Р…РЎвЂ№РЎвЂ¦ - Р С•РЎвЂљ 10 Р Т‘Р С• 30 Р Т‘Р Р…Р ВµР в„– Р В±Р В°Р Р…Р В°.\nР СњР ВµР В°Р Т‘Р ВµР С”Р Р†Р В°РЎвЂљР Р…Р С•Р Вµ Р С—Р С•Р Р†Р ВµР Т‘Р ВµР Р…Р С‘Р Вµ - Р С•РЎвЂљ 1 Р Т‘Р С• 3 Р Т‘Р Р…Р ВµР в„– Р В±Р В°Р Р…Р В°.\nР вЂ”Р В° РЎР‚Р ВµР С”Р В»Р В°Р СРЎС“ Р Т‘РЎР‚РЎС“Р С–Р С‘РЎвЂ¦ РЎРѓР ВµРЎР‚Р Р†Р ВµРЎР‚Р С•Р Р† РЎРѓР В°Р в„–РЎвЂљР С•Р Р† РЎвЂћР С•РЎР‚РЎС“Р СР С•Р Р† Р С‘ Р С—РЎР‚Р С•РЎвЂЎР ВµР Вµ Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р В±Р В°Р Р… Р Р…Р В° 7 Р Т‘Р Р…Р ВµР в„– + ban IP.\nР вЂ”Р В° Р С•РЎРѓР С”Р С•РЎР‚Р В±Р В»Р ВµР Р…Р С‘Р Вµ Р С—РЎР‚Р С•Р ВµР С”РЎвЂљР В° Р Р† Р В»РЎР‹Р В±Р С•Р в„– РЎвЂЎР В°РЎвЂљ РЎРѓР ВµРЎР‚Р Р†Р ВµРЎР‚Р В° Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р В±Р В°Р Р… Р Р…Р В° 7 Р Т‘Р Р…Р ВµР в„– + ban IP.\nР СњР В° РЎРѓР ВµРЎР‚Р Р†Р ВµРЎР‚Р Вµ Р В·Р В°Р С—РЎР‚Р ВµРЎвЂ°Р ВµР Р…Р С• Р Р†РЎРѓРЎРЏРЎвЂЎР ВµРЎРѓР С”Р С•Р Вµ Р СР С•РЎв‚¬Р ВµР Р…Р Р…Р С‘РЎвЂЎР ВµРЎРѓРЎвЂљР Р†Р С• Р Т‘РЎР‚РЎС“Р С–Р С‘РЎвЂ¦ Р С‘Р С–РЎР‚Р С•Р С”Р С•Р Р†, Р С•Р В±Р СР В°Р Р…, Р С‘ Р СР С•РЎв‚¬Р ВµР Р…Р Р…Р С‘РЎвЂЎР ВµРЎРѓРЎвЂљР Р†Р С• Р Р† РЎвЂ Р ВµР В»РЎРЏРЎвЂ¦ Р С”РЎР‚Р В°Р В¶Р С‘ Р В»Р С‘РЎвЂЎР Р…Р С•Р С–Р С• Р С‘Р СРЎС“РЎвЂ°Р ВµРЎРѓРЎвЂљР Р†Р В° (Р СњР ВµР Т‘Р Р†Р С‘Р В¶Р С‘Р СР С•РЎРѓРЎвЂљРЎРЉ,Р СћР РЋ, Р вЂ™Р С‘РЎР‚РЎвЂљРЎвЂ№) Р С‘Р С–РЎР‚Р С•Р С”Р С•Р Р†. Р СњР В°Р С”Р В°Р В·Р В°Р Р…Р С‘Р Вµ: Р В±Р В°Р Р… 30 Р Т‘Р Р…Р ВµР в„–.\nР вЂ”Р В°Р С—РЎР‚Р ВµРЎвЂ°Р ВµР Р… Р С•Р В±Р СР В°Р Р… Р В°Р Т‘Р СР С‘Р Р…Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘Р С‘ Р С—РЎР‚Р С•Р ВµР С”РЎвЂљР В°, Р Р…Р В°Р С”Р В°Р В·РЎвЂ№Р Р†Р В°Р ВµРЎвЂљРЎРѓРЎРЏ: BAN 3 day.\nР вЂ”Р В° Р С‘РЎРѓР С—Р С•Р В»РЎРЉР В·Р С•Р Р†Р В°Р Р…Р С‘РЎРЏ Р В±Р В°Р С–Р С•РЎР‹Р В·Р В° РЎРѓР С‘РЎРѓРЎвЂљР ВµР СРЎвЂ№ РЎРѓР ВµРЎР‚Р Р†Р ВµРЎР‚Р В°, Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р В±Р В°Р Р… Р Т‘Р С• 5 Р Т‘Р Р…Р ВµР в„–.\n\nР СњР В°Р С”Р В°Р В·Р В°Р Р…Р С‘Р Вµ Р СљРЎС“РЎвЂљ:\nР пїЅР С–РЎР‚Р С•Р С”Р В°Р С Р В·Р В°Р С—РЎР‚Р ВµРЎвЂ°Р ВµР Р…Р С• Р С•РЎРѓР С”Р С•РЎР‚Р В±Р В»РЎРЏРЎвЂљРЎРЉ Р Т‘РЎР‚РЎС“Р С–Р С‘РЎвЂ¦ Р С‘Р С–РЎР‚Р С•Р С”Р С•Р Р†, Р Р†РЎвЂ№РЎР‚Р В°Р В¶Р В°РЎвЂљРЎРЉРЎРѓРЎРЏ Р Р…Р ВµРЎвЂ Р ВµР Р…Р В·РЎС“РЎР‚Р Р…Р С•Р в„– Р В±РЎР‚Р В°Р Р…РЎРЉРЎР‹ Р Р† Р С›Р С›Р РЋ Р С‘ IC РЎвЂЎР В°РЎвЂљРЎвЂ№, Р С•РЎРѓР С”Р С•РЎР‚Р В±Р В»РЎРЏРЎвЂљРЎРЉ Р С‘ РЎС“Р Р…Р С‘Р В¶Р В°РЎвЂљРЎРЉ РЎвЂЎР ВµРЎРѓРЎвЂљРЎРЉ Р С‘ Р Т‘Р С•РЎРѓРЎвЂљР С•Р С‘Р Р…РЎРѓРЎвЂљР Р†Р В° Р С‘Р С–РЎР‚Р С•Р С”Р С•Р Р†. Р СњР В°Р С”Р В°Р В·Р В°Р Р…Р С‘Р Вµ: Mute 30 min.\nР вЂ”Р В° CAPS Р Р† ic РЎвЂЎР В°РЎвЂљ, Р Р† РЎР‚Р ВµР С—Р С•РЎР‚РЎвЂљ Р С‘Р В»Р С‘ Р Р† /r /f РЎвЂЎР В°РЎвЂљРЎвЂ№ Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р В±Р В°Р Р… РЎвЂЎР В°РЎвЂљР В° Р Т‘Р С• 10 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° Р С•РЎвЂћРЎвЂћРЎвЂљР С•Р С— Р Р† РЎР‚Р ВµР С—Р С•РЎР‚РЎвЂљ Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р В±Р В°Р Р… РЎвЂЎР В°РЎвЂљР В° Р Р…Р В° 20 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° РЎвЂћР В»РЎС“Р Т‘ Р Р†Р С• Р Р†РЎРѓР Вµ РЎвЂЎР В°РЎвЂљРЎвЂ№ Р Р†Р С”Р В»РЎР‹РЎвЂЎР В°РЎРЏ /b РЎвЂЎР В°РЎвЂљ Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р В±Р В°Р Р… РЎвЂЎР В°РЎвЂљР В° Р С•РЎвЂљ 10 Р Т‘Р С• 20 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° Р С•РЎРѓР С”Р С•РЎР‚Р В±Р В»Р ВµР Р…Р С‘Р Вµ Р С‘Р С–РЎР‚Р С•Р С”Р В° Р С‘Р В»Р С‘ Р В°Р Т‘Р СР С‘Р Р…Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂљР С•РЎР‚Р В° Р Р† РЎР‚Р ВµР С—Р С•РЎР‚РЎвЂљ Р С‘Р С–РЎР‚Р С•Р С” Р С—Р С•Р В»РЎС“РЎвЂЎР В°Р ВµРЎвЂљ Р В±Р В°Р Р… РЎвЂЎР В°РЎвЂљР В° Р Т‘Р С• 60 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° РЎвЂљРЎР‚Р В°Р Р…РЎРѓР В»Р С‘РЎвЂљ Р Р† ic РЎвЂЎР В°РЎвЂљ Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°РЎвЂРЎвЂљРЎРѓРЎРЏ Р В±Р В°Р Р… РЎвЂЎР В°РЎвЂљР В° Р С•РЎвЂљ 5 Р Т‘Р С• 10 Р СР С‘Р Р…РЎС“РЎвЂљ.\n\nР СњР В°Р С”Р В°Р В·Р Р…Р С‘Р Вµ Р вЂ™Р В°РЎР‚Р Р…/Р вЂќР ВµР СР С•РЎР‚Р С–Р В°Р Р…:\nР вЂєРЎР‹Р В±Р С•Р СРЎС“ Р С‘Р С–РЎР‚Р С•Р С”РЎС“ Р В·Р В°Р С—РЎР‚Р ВµРЎвЂ°Р ВµР Р…Р С• Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р В°РЎвЂљРЎРЉ Р С‘Р С–РЎР‚Р С•Р Р†Р С•Р в„– Р С—РЎР‚Р С•РЎвЂ Р ВµРЎРѓРЎРѓ Р С‘ Р Р†Р В»Р ВµР В·Р В°РЎвЂљРЎРЉ Р Р† Р Р…Р ВµР С–Р С• Р С—Р С•Р Т‘ Р С•РЎРѓР Р…Р С•Р Р†Р В°Р Р…Р С‘Р ВµР С DM. Р Р€Р В±Р С‘Р в„–РЎРѓРЎвЂљР Р†Р С• Р В±Р ВµР В· Р С—РЎР‚Р С‘РЎвЂЎР С‘Р Р…РЎвЂ№//Р СР В°РЎРѓРЎРѓР С•Р Р†Р С•Р Вµ РЎС“Р В±Р С‘Р в„–РЎРѓРЎвЂљР Р†Р С• Р С‘Р С–РЎР‚Р С•Р С”Р С•Р Р†//Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р ВµР Р…Р С‘Р Вµ Р С‘Р С–РЎР‚Р С•Р Р†Р С•Р С–Р С• Р С—РЎР‚Р С•РЎвЂ Р ВµРЎРѓРЎРѓР В°...\n...РЎС“Р В±Р С‘Р в„–РЎРѓРЎвЂљР Р†Р С• Р Р…Р Вµ Р С‘Р СР ВµРЎРЏ Р Р…Р В° РЎвЂљР С• Role Play Р С•РЎРѓР Р…Р С•Р Р†Р В°Р Р…Р С‘Р в„–, Р Р…Р В°Р С”Р В°Р В·РЎвЂ№Р Р†Р В°Р ВµРЎвЂљРЎРѓРЎРЏ: Р Т‘Р ВµР СР С•РЎР‚Р С–Р В°Р Р… 2 РЎвЂЎР В°РЎРѓР В°.\nР пїЅР С–РЎР‚Р С•Р С”Р В°Р С Р В·Р В°Р С—РЎР‚Р ВµРЎвЂ°Р ВµР Р…Р С• Р С‘РЎРѓР С—Р С•Р В»РЎРЉР В·Р С•Р Р†Р В°РЎвЂљРЎРЉ Р Р† Р С”Р В°РЎвЂЎР ВµРЎРѓРЎвЂљР Р†Р Вµ Р С•РЎР‚РЎС“Р В¶Р С‘РЎРЏ Р Т‘Р В»РЎРЏ РЎС“Р В±Р С‘Р в„–РЎРѓРЎвЂљР Р†Р В° РЎвЂљРЎР‚Р В°Р Р…РЎРѓР С—Р С•РЎР‚РЎвЂљР Р…Р С•Р Вµ РЎРѓРЎР‚Р ВµР Т‘РЎРѓРЎвЂљР Р†Р С• (DB), Р Р…Р Вµ Р С‘Р СР ВµРЎРЏ Р Р…Р В° РЎвЂљР С• Role Play Р С•РЎРѓР Р…Р С•Р Р†Р В°Р Р…Р С‘Р в„– Р Р…Р В°Р С”Р В°Р В·Р В°Р Р…Р С‘Р Вµ: Р Т‘Р ВµР СР С•РЎР‚Р С–Р В°Р Р… 30 - 60 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° Р вЂќР Сљ Р Р† Р вЂ”Р вЂ” Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р Т‘Р ВµР СР С•РЎР‚Р С–Р В°Р Р… 15 - 30 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° Р вЂќР Сљ Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р Т‘Р ВµР СР С•РЎР‚Р С–Р В°Р Р… 15 - 30 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° SpawnKill Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р Т‘Р ВµР СР С•РЎР‚Р С–Р В°Р Р… 15 - 20 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° Р вЂќР вЂ Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎРЉ Р С—Р С•Р СР ВµРЎвЂ°Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р Р† Р Т‘Р ВµР СР С•РЎР‚Р С–Р В°Р Р… 15 - 20 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° Team kill Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р Р†Р В°РЎР‚Р Р… Р С‘Р В»Р С‘ Р Т‘Р ВµР СР С•РЎР‚Р С–Р В°Р Р… 30 - 60 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° РЎРѓР В±Р С‘Р Р† Р В°Р Р…Р С‘Р СР В°РЎвЂ Р С‘Р С‘ Р С‘Р С–РЎР‚Р С•Р С”РЎС“ Р Р†РЎвЂ№Р Т‘Р В°РЎвЂРЎвЂљРЎРѓРЎРЏ Р Т‘Р ВµР СР С•РЎР‚Р С–Р В°Р Р… 15 Р СР С‘Р Р…РЎС“РЎвЂљ.\nР вЂ”Р В° Р С‘РЎРѓР С—Р С•Р В»РЎРЉР В·Р С•Р Р†Р В°Р Р…Р С‘РЎРЏ Р В±Р В°Р С–Р С•РЎР‹Р В·Р В° +РЎРѓ, Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р Т‘Р ВµР СР С•РЎР‚Р С–Р В°Р Р… 15 Р СР С‘Р Р…РЎС“РЎвЂљ.. Р пїЅРЎРѓР С”Р В»РЎР‹РЎвЂЎР ВµР Р…Р С‘Р Вµ, Р С–Р ВµРЎвЂљРЎвЂљР С•.\nР вЂ”Р В° Р вЂќР Сљ Р Р† Р С™Р СџР вЂ”, Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р С‘РЎвЂљР ВµР В»РЎР‹ Р Р†РЎвЂ№Р Т‘Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р Р†Р В°РЎР‚Р Р….')
+			imgui.Text(u8'Наказание Бан:\nИгрокам запрещено использовать посторонние чит-программы, программы взлома игрового функционала. Наказание: бан 30 дней.\nИспользование / хранение запрещённых читерских программ: Aim, Speed Hack, Wall Hack, Fly, DGun, Cleo HP, Autorepair/GM Car, Airbreak, Fast Gan, Рванка Собейт - от 10 до 30 дней\nУпоминание родных /Оскорбление в нике - 30 дней бана.\nОскорбление родных - от 10 до 30 дней бана.\nНеадекватное поведение - от 1 до 3 дней бана.\nЗа рекламу других серверов сайтов форумов и прочее нарушителю выдается бан на 7 дней + ban IP.\nЗа оскорбление проекта в любой чат сервера нарушителю выдается бан на 7 дней + ban IP.\nНа сервере запрещено всяческое мошенничество других игроков, обман, и мошенничество в целях кражи личного имущества (Недвижимость,ТС, Вирты) игроков. Наказание: бан 30 дней.\nЗапрещен обман администрации проекта, наказывается: BAN 3 day.\nЗа использования багоюза системы сервера, нарушителю выдается бан до 5 дней.\n\nНаказание Мут:\nИгрокам запрещено оскорблять других игроков, выражаться нецензурной бранью в ООС и IC чаты, оскорблять и унижать честь и достоинства игроков. Наказание: Mute 30 min.\nЗа CAPS в ic чат, в репорт или в /r /f чаты нарушителю выдается бан чата до 10 минут.\nЗа оффтоп в репорт нарушителю выдается бан чата на 20 минут.\nЗа флуд во все чаты включая /b чат нарушителю выдается бан чата от 10 до 20 минут.\nЗа оскорбление игрока или администратора в репорт игрок получает бан чата до 60 минут.\nЗа транслит в ic чат нарушителю выдаётся бан чата от 5 до 10 минут.\n\nНаказние Варн/Деморган:\nЛюбому игроку запрещено нарушать игровой процесс и влезать в него под основанием DM. Убийство без причины//массовое убийство игроков//нарушение игрового процесса...\n...убийство не имея на то Role Play оснований, наказывается: деморган 2 часа.\nИгрокам запрещено использовать в качестве оружия для убийства транспортное средство (DB), не имея на то Role Play оснований наказание: деморган 30 - 60 минут.\nЗа ДМ в ЗЗ нарушителю выдается деморган 15 - 30 минут.\nЗа ДМ нарушителю выдается деморган 15 - 30 минут.\nЗа SpawnKill нарушителю выдается деморган 15 - 20 минут.\nЗа ДБ нарушитель помещается в деморган 15 - 20 минут.\nЗа Team kill нарушителю выдается варн или деморган 30 - 60 минут.\nЗа сбив анимации игроку выдаётся деморган 15 минут.\nЗа использования багоюза +с, выдается деморган 15 минут.. Исключение, гетто.\nЗа ДМ в КПЗ, нарушителю выдается варн.')
 			imgui.End()
         end
         if vzaimod.v then
             local name = sampGetPlayerNickname(vzID)
             local btn_size = imgui.ImVec2(-0.1, 0)
-            imgui.Begin(u8"Р СљР ВµР Р…РЎР‹ Р Р†Р В·Р В°Р С‘Р СР С•Р Т‘Р ВµР в„–РЎРѓРЎвЂљР Р†Р С‘Р в„–",vzaimod,imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
+            imgui.Begin(u8"Меню взаимодействий",vzaimod,imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
             imgui.SetCursorPosX((imgui.GetWindowWidth() - 290) / 2)
-            imgui.Text(string.format(u8"Р вЂ™Р В·Р В°Р С‘Р СР С•Р Т‘Р ВµР в„–РЎРѓРЎвЂљР Р†Р С‘Р Вµ РЎРѓ Р С‘Р С–РЎР‚Р С•Р С”Р С•Р С %s[%s]", name, vzID))
+            imgui.Text(string.format(u8"Взаимодействие с игроком %s[%s]", name, vzID))
             imgui.Separator()
             imgui.Text(u8("Command function"))
             imgui.BeginChild("##g_sexbar", imgui.ImVec2(370, 187), true, imgui.WindowFlags.NoScrollbar)
-            if imgui.Button(u8'Р РЋРЎвЂљР В°РЎвЂљР С‘РЎРѓРЎвЂљР С‘Р С”Р В° Р С‘Р С–РЎР‚Р С•Р С”Р В°', btn_size) then
+            if imgui.Button(u8'Статистика игрока', btn_size) then
                 lua_thread.create(function()
                 sampSendChat(string.format(u8"/stats %s", vzID))
                 end)
             end
-            if imgui.Button(u8'Р вЂќР ВµР Р…РЎРЉР С–Р С‘ Р С‘Р С–РЎР‚Р С•Р С”Р В°', btn_size) then
+            if imgui.Button(u8'Деньги игрока', btn_size) then
                 lua_thread.create(function()
                 sampSendChat(string.format(u8"/money %s", vzID))
                 end)
             end
-            if imgui.Button(u8'Р С›РЎвЂљР С—РЎР‚Р В°Р Р†Р С‘РЎвЂљРЎРЉ Р С‘Р С–РЎР‚Р С•Р С”Р В° Р Р…Р В° РЎРѓР С—Р В°Р Р†Р Р…', btn_size) then
+            if imgui.Button(u8'Отправить игрока на спавн', btn_size) then
                 lua_thread.create(function()
                 sampSendChat(string.format(u8"/spawn %s", vzID))
                 end)
             end
-            if imgui.Button(u8'Р СћР ВµР В»Р ВµР С—Р С•РЎР‚РЎвЂљР С‘РЎР‚Р С•Р Р†Р В°РЎвЂљРЎРЉРЎРѓРЎРЏ Р С” Р С‘Р С–РЎР‚Р С•Р С”РЎС“', btn_size) then
+            if imgui.Button(u8'Подкинуть Игрока', btn_size) then
+                lua_thread.create(function()
+                sampSendChat(string.format(u8"/slap %s", vzID))
+                end)
+            end
+            if imgui.Button(u8'Телепортироваться к игроку', btn_size) then
                 lua_thread.create(function()
                 sampSendChat(string.format(u8"/goto %s", vzID))
                 end)
             end
-            if imgui.Button(u8'Р СћР ВµР В»Р ВµР С—Р С•РЎР‚РЎвЂљР С‘РЎР‚Р С•Р Р†Р В°РЎвЂљРЎРЉ Р С‘Р С–РЎР‚Р С•Р С”Р В° Р С” РЎРѓР ВµР В±Р Вµ', btn_size) then
+            if imgui.Button(u8'Телепортировать игрока к себе', btn_size) then
                 lua_thread.create(function()
                 sampSendChat(string.format(u8"/gethere %s", vzID))
                 end)
             end
-            if imgui.Button(u8'Р вЂ”Р В°Р СР С•РЎР‚Р С•Р В·Р С‘РЎвЂљРЎРЉ Р С‘Р С–РЎР‚Р С•Р С”Р В°', btn_size) then
+            if imgui.Button(u8'Заморозить игрока', btn_size) then
                 lua_thread.create(function()
                 sampSendChat(string.format(u8"/freeze %s", vzID))
                 end)
             end
-            if imgui.Button(u8'Р В Р В°Р В·Р В°Р СР С•РЎР‚Р С•Р В·Р С‘РЎвЂљРЎРЉ Р С‘Р С–РЎР‚Р С•Р С”Р В°', btn_size) then
+            if imgui.Button(u8'Разаморозить игрока', btn_size) then
                 lua_thread.create(function()
                 sampSendChat(string.format(u8"/unfreeze %s", vzID))
                 end)
@@ -427,29 +432,29 @@ function imgui.OnDrawFrame()
             imgui.EndChild()
             imgui.Text(u8("Recon function"))
             imgui.BeginChild("##g_sear", imgui.ImVec2(370, 155), true, imgui.WindowFlags.NoScrollbar)
-            if imgui.Button(u8'Р СџРЎР‚Р С•Р Р†Р ВµРЎР‚Р С”Р В° Р С‘Р С–РЎР‚Р С•Р С”Р В° Р Р…Р В° Р С’Р В¤Р С™ Р В±Р ВµР В· esc', btn_size) then
+            if imgui.Button(u8'Проверка игрока на АФК без esc', btn_size) then
                 lua_thread.create(function()
-                sampSendChat("/ans ".. vzID .." ".. name .."[".. vzID .."] Р вЂ™РЎвЂ№ РЎвЂљРЎС“РЎвЂљ? Р С›РЎвЂљР Р†Р ВµРЎвЂљ Р Р† Р В»РЎР‹Р В±Р С•Р в„– РЎвЂЎР В°РЎвЂљ.")
+                sampSendChat("/ans ".. vzID .." ".. name .."[".. vzID .."] Вы тут? Ответ в любой чат.")
                 wait(900)
-                sampSendChat("/ans ".. vzID .." ".. name .."[".. vzID .."] Р вЂ™РЎвЂ№ РЎвЂљРЎС“РЎвЂљ? Р С›РЎвЂљР Р†Р ВµРЎвЂљ Р Р† Р В»РЎР‹Р В±Р С•Р в„– РЎвЂЎР В°РЎвЂљ.")
+                sampSendChat("/ans ".. vzID .." ".. name .."[".. vzID .."] Вы тут? Ответ в любой чат.")
                 wait(1000)
-                sampSendChat("/ans ".. vzID .." ".. name .."[".. vzID .."] Р вЂ™РЎвЂ№ РЎвЂљРЎС“РЎвЂљ? Р С›РЎвЂљР Р†Р ВµРЎвЂљ Р Р† Р В»РЎР‹Р В±Р С•Р в„– РЎвЂЎР В°РЎвЂљ.")
+                sampSendChat("/ans ".. vzID .." ".. name .."[".. vzID .."] Вы тут? Ответ в любой чат.")
                 end)
             end
-            if imgui.Button(u8'Р пїЅР Сџ Р С‘Р С–РЎР‚Р С•Р С”Р В°', btn_size) then
+            if imgui.Button(u8'ИП игрока', btn_size) then
                 lua_thread.create(function()
                 sampSendChat(string.format(u8"/checkip %s", vzID))
                 end)
             end
-            if imgui.Button(u8'Р вЂ™РЎвЂ№Р Т‘Р В°РЎвЂљРЎРЉ Р С‘Р С–РЎР‚Р С•Р С”РЎС“ Р В·Р Т‘Р С•РЎР‚Р С•Р Р†РЎРЉР Вµ', btn_size) then
+            if imgui.Button(u8'Выдать игроку здоровье', btn_size) then
                 lua_thread.create(function()
                 sampSendChat("/sethp ".. vzID .." 100")
                 wait(700)
-                sampSendChat("/a [Admin Tools] Р вЂ™РЎвЂ№Р Т‘Р В°Р В» 100 HP Р С‘Р С–РЎР‚Р С•Р С”РЎС“ ".. name .."[".. vzID .."]")
+                sampSendChat("/a [Admin Tools] Выдал 100 HP игроку ".. name .."[".. vzID .."]")
                 end)
             end
             imgui.EndChild()
-            if imgui.Button(u8'Р вЂ”Р В°Р С”РЎР‚РЎвЂ№РЎвЂљРЎРЉ',imgui.ImVec2(370,20)) then
+            if imgui.Button(u8'Закрыть',imgui.ImVec2(370,20)) then
                 vzaimod.v = false
             end
             imgui.End()
@@ -458,33 +463,25 @@ function imgui.OnDrawFrame()
 end
 
 function main()
-    -- Р вЂ”Р В°Р С–РЎР‚РЎС“Р В·Р С”Р В° SAMP --
+    -- Загрузка SAMP --
     if not isSampfuncsLoaded() or not isSampLoaded() then return end
     while not isSampAvailable() do wait(0) end
-    notf.addNotification(string.format("Р СџР С•Р СР С•РЎвЂ°Р Р…Р С‘Р С” Р В°Р Т‘Р СР С‘Р Р…Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂљР С•РЎР‚Р В°, Р Р†Р С”Р В»РЎР‹РЎвЂЎР ВµР Р…!\nР вЂ™Р ВµРЎР‚РЎРѓР С‘РЎРЏ РЎРѓР С”РЎР‚Р С‘Р С—РЎвЂљР В°: 0.02", 115, os.date()), 15)
-    -- Р вЂ”Р В°Р С–РЎР‚РЎС“Р В·Р С”Р В° SAMP --
+    autoupdate("https://raw.githubusercontent.com/softmvshine/admintools/master/checking.json", '{ff0000}[Admin Tools]{FFFFFF} ', "http://forum.samp-states.ru/threads/123/")
+    notf.addNotification(string.format("Помощник администратора, включен!\nДата-Версия скрипта: "..thisScript().version, 115, os.date()), 15)
+    -- Загрузка SAMP --
+    
 
-    -- Р СџРЎР‚Р С•Р Р†Р ВµРЎР‚Р С”Р В° Р С™Р С•Р Р…РЎвЂћР С‘Р С–РЎС“РЎР‚Р В°РЎвЂ Р С‘Р С•Р Р…Р Р…РЎвЂ№РЎвЂ¦ Р В¤Р В°Р в„–Р В»Р С•Р Р† --
-    local ip, port = sampGetCurrentServerAddress()
-    if ip == '176.32.39.179' then
-        sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Р РЋР С”РЎР‚Р С‘Р С—РЎвЂљ РЎС“РЎРѓР С—Р ВµРЎв‚¬Р Р…Р С• Р В°Р С”РЎвЂљР С‘Р Р†Р С‘РЎР‚Р С•Р Р†Р В°Р Р… | Author: Fernando Miracle | Marchionne Rowtea", -1)
-        activate = true
-    else
-        sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Р вЂ™РЎвЂ№ Р Т‘Р С•Р В»Р В¶Р Р…РЎвЂ№ Р Р…Р В°РЎвЂ¦Р С•Р Т‘Р С‘РЎвЂљРЎРѓРЎРЏ Р Р…Р В° States Role Play! Р РЋР С”РЎР‚Р С‘Р С—РЎвЂљ Р Т‘Р ВµР В°Р С”РЎвЂљР С‘Р Р†Р С‘РЎР‚Р С•Р Р†Р В°Р Р…", -1)
-    end
-
-    -- Р С™Р С•Р СР В°Р Р…Р Т‘РЎвЂ№ --
+    -- Команды --
 	sampRegisterChatCommand("amenu", cmd_amenu)
     sampRegisterChatCommand("afk", cmd_afk)
     sampRegisterChatCommand(optionsCommand, function(param)
 		if param == "bones" then whVisible = param; nameTagOff()
 		elseif param == "names" or param == "all" then whVisible = param if not nameTag then nameTagOn() end
-		else sampAddChatMessage("{ff0000}[Admin Tools]{FFFFFF} Р вЂ™Р Р†Р ВµР Т‘Р С‘РЎвЂљР Вµ Р С”Р С•РЎР‚РЎР‚Р ВµР С”РЎвЂљР Р…РЎвЂ№Р в„– РЎР‚Р ВµР В¶Р С‘Р С: names/bones/all", 0xFF4444FF) end
+		else sampAddChatMessage("{ff0000}[Admin Tools]{FFFFFF} Введите корректный режим: names/bones/all", 0xFF4444FF) end
     end)
 	while not sampIsLocalPlayerSpawned() do wait(100) end
 	if defaultState and not nameTag then nameTagOn() end
-    -- Р С™Р С•Р СР В°Р Р…Р Т‘РЎвЂ№ --
-    autoupdate("https://raw.githubusercontent.com/softmvshine/admintools/master/checking.json", '{ff0000}[Admin Tools]{FFFFFF} ', "http://forum.samp-states.ru/threads/123/")
+    -- Команды --
 
     wait(0)
 
@@ -506,13 +503,13 @@ function main()
         end
         if isKeyJustPressed(key.VK_3) and wasKeyPressed(key.VK_LMENU) then; 
             if defaultState then
-                sampAddChatMessage("{ff0000}[Admin Tools]{FFFFFF} WallHack {ff0000}Р Р†РЎвЂ№Р С”Р В»РЎР‹РЎвЂЎР ВµР Р…{ffffff}", 0xFFFFFFFF)
+                sampAddChatMessage("{ff0000}[Admin Tools]{FFFFFF} WallHack {ff0000}выключен{ffffff}", 0xFFFFFFFF)
                 defaultState = false; 
 				nameTagOff(); 
 				while isKeyDown(KEY) do wait(100) end 
 			else
                 defaultState = true;
-                sampAddChatMessage("{ff0000}[Admin Tools]{FFFFFF} WallHack {20ed15}Р Р†Р С”Р В»РЎР‹РЎвЂЎР ВµР Р…{ffffff}", 0xFFFFFFFF)
+                sampAddChatMessage("{ff0000}[Admin Tools]{FFFFFF} WallHack {20ed15}включен{ffffff}", 0xFFFFFFFF)
 				if whVisible ~= "bones" and not nameTag then nameTagOn() end
 				while isKeyDown(KEY) do wait(100) end 
 			end 
@@ -562,9 +559,9 @@ function main()
         if wasKeyPressed(key.VK_F5) then
             if formb == true then
                 if formacmd == "warn" or formacmd == "kick" then 
-                    sampSendChat("/pm "..formaid.." Р вЂўРЎРѓР В»Р С‘ Р Р†РЎвЂ№ Р Р…Р Вµ РЎРѓР С•Р С–Р В»Р В°РЎРѓР Р…РЎвЂ№ РЎРѓ Р Р…Р В°Р С”Р В°Р В·Р В°Р Р…Р С‘Р ВµР С Р Р…Р В°Р С—Р С‘РЎв‚¬Р С‘РЎвЂљР Вµ Р В¶Р В°Р В»Р С•Р В±РЎС“ forum.samp-states.ru")
+                    sampSendChat("/pm "..formaid.." Если вы не согласны с наказанием напишите жалобу forum.samp-states.ru")
                     wait(500)
-                    sampSendChat("/"..formacmd.." "..formaid.." "..formatime2.." РІР‚Сћ "..formaadm)
+                    sampSendChat("/"..formacmd.." "..formaid.." "..formatime2.." • "..formaadm)
                     wait(2000) 
                     sampSendChat("/a [FORMA] +")
                     formb = false
@@ -573,7 +570,7 @@ function main()
                     formatime = nil
                 
                 else
-                    sampSendChat("/"..formacmd.." "..formaid.." "..formatime2.." РІР‚Сћ "..formaadm)
+                    sampSendChat("/"..formacmd.." "..formaid.." "..formatime2.." • "..formaadm)
                     wait(1000) 
                     sampSendChat("/a [FORMA] +")
                     formb = false
@@ -584,15 +581,15 @@ function main()
             end
             if forma == true then
                 if formacmd == "inftime" then
-                        sampSendChat("/pm "..formaid.." Р вЂўРЎРѓР В»Р С‘ Р Р†РЎвЂ№ Р Р…Р Вµ РЎРѓР С•Р С–Р В»Р В°РЎРѓР Р…РЎвЂ№ РЎРѓ Р Р…Р В°Р С”Р В°Р В·Р В°Р Р…Р С‘Р ВµР С Р Р…Р В°Р С—Р С‘РЎв‚¬Р С‘РЎвЂљР Вµ Р В¶Р В°Р В»Р С•Р В±РЎС“ forum.samp-states.ru")
+                        sampSendChat("/pm "..formaid.." Если вы не согласны с наказанием напишите жалобу forum.samp-states.ru")
                         wait(500)
-                        sampSendChat("/"..formacmd.." "..formaid2.." РІР‚Сћ "..formaadm)
+                        sampSendChat("/"..formacmd.." "..formaid2.." • "..formaadm)
                         lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
                         forma = false
                         formacmd = nil
                         formaid = nil
                 else
-                    sampSendChat("/"..formacmd.." "..formaid2.." РІР‚Сћ "..formaadm)
+                    sampSendChat("/"..formacmd.." "..formaid2.." • "..formaadm)
                     lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
                     forma = false
                     formacmd = nil
@@ -601,9 +598,9 @@ function main()
 			end
             if formc == true then
                 if formacmd == "jail" or formacmd == "ban" then
-                sampSendChat("/pm "..formaid.." Р вЂўРЎРѓР В»Р С‘ Р Р†РЎвЂ№ Р Р…Р Вµ РЎРѓР С•Р С–Р В»Р В°РЎРѓР Р…РЎвЂ№ РЎРѓ Р Р…Р В°Р С”Р В°Р В·Р В°Р Р…Р С‘Р ВµР С Р Р…Р В°Р С—Р С‘РЎв‚¬Р С‘РЎвЂљР Вµ Р В¶Р В°Р В»Р С•Р В±РЎС“ forum.samp-states.ru")
+                sampSendChat("/pm "..formaid.." Если вы не согласны с наказанием напишите жалобу forum.samp-states.ru")
                 wait(1100)
-                sampSendChat("/"..formacmd.." "..formaid3.." "..formatime3.." "..formareason3.." РІР‚Сћ "..formaadm)
+                sampSendChat("/"..formacmd.." "..formaid3.." "..formatime3.." "..formareason3.." • "..formaadm)
 				lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
                 formc = false
                 formacmd = nil
@@ -643,7 +640,7 @@ if text:find("[A]", 1, true) then
             formb = true
             lua_thread.create(function()
                 wait(100)
-                sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Р СџРЎР‚Р С‘РЎв‚¬Р В»Р В° РЎвЂћР С•РЎР‚Р СР В°, Р Т‘Р В»РЎРЏ Р Р†РЎвЂ№Р С—Р С•Р В»Р Р…Р ВµР Р…Р С‘РЎРЏ Р Р…Р В°Р В¶Р СР С‘РЎвЂљР Вµ 'F5'", -1)
+                sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Пришла форма, для выполнения нажмите 'F5'", -1)
             end)
         end
     end
@@ -656,7 +653,7 @@ if text:find("[A]", 1, true) then
             forma = true
             lua_thread.create(function()
                 wait(100)
-                sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Р СџРЎР‚Р С‘РЎв‚¬Р В»Р В° РЎвЂћР С•РЎР‚Р СР В°, Р Т‘Р В»РЎРЏ Р Р†РЎвЂ№Р С—Р С•Р В»Р Р…Р ВµР Р…Р С‘РЎРЏ Р Р…Р В°Р В¶Р СР С‘РЎвЂљР Вµ 'F5'", -1)
+                sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Пришла форма, для выполнения нажмите 'F5'", -1)
             end)
         end
     end
@@ -669,37 +666,37 @@ if text:find("[A]", 1, true) then
             formc = true
             lua_thread.create(function()
                 wait(100)
-                sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Р СџРЎР‚Р С‘РЎв‚¬Р В»Р В° РЎвЂћР С•РЎР‚Р СР В°, Р Т‘Р В»РЎРЏ Р Р†РЎвЂ№Р С—Р С•Р В»Р Р…Р ВµР Р…Р С‘РЎРЏ Р Р…Р В°Р В¶Р СР С‘РЎвЂљР Вµ 'F5'", -1)
+                sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Пришла форма, для выполнения нажмите 'F5'", -1)
             end)
         end
     end
 end
 if forma == true then
     local formaname = sampGetPlayerNickname(formaid2)
-    if text:find("Р С—Р Р…РЎС“Р В» Р С‘Р С–РЎР‚Р С•Р С”Р В° "..formaname) then
+    if text:find("пнул игрока "..formaname) then
         lua_thread.create(function()
             wait(100)
-            sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Р В¤Р С•РЎР‚Р СР В° Р В±РЎвЂ№Р В»Р В° Р Р†РЎвЂ№Р С—Р С•Р В»Р Р…Р ВµР Р…Р В° Р Т‘РЎР‚РЎС“Р С–Р С‘Р С Р В°Р Т‘Р СР С‘Р Р…Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂљР С•РЎР‚Р С•Р С", -1)
+            sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Форма была выполнена другим администратором", -1)
         end)
         forma = false
     end
 end
 if formc == true then
     local formaname2 = sampGetPlayerNickname(formaid3)
-    if text:find("Р В·Р В°Р В±Р В°Р Р…Р С‘Р В» "..formaname2) then
+    if text:find("забанил "..formaname2) then
         lua_thread.create(function()
             wait(100)
-            sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Р В¤Р С•РЎР‚Р СР В° Р В±РЎвЂ№Р В»Р В° Р Р†РЎвЂ№Р С—Р С•Р В»Р Р…Р ВµР Р…Р В° Р Т‘РЎР‚РЎС“Р С–Р С‘Р С Р В°Р Т‘Р СР С‘Р Р…Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂљР С•РЎР‚Р С•Р С", -1)
+            sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Форма была выполнена другим администратором", -1)
         end)
         formc = false
     end
 end
 if formb == true then
     local formaname3 = sampGetPlayerNickname(formaid)
-    if text:find("Р С”Р С‘Р С”Р Р…РЎС“Р В» Р С‘Р С–РЎР‚Р С•Р С”Р В° "..formaname3) then
+    if text:find("кикнул игрока "..formaname3) then
         lua_thread.create(function()
             wait(100)
-            sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Р В¤Р С•РЎР‚Р СР В° Р В±РЎвЂ№Р В»Р В° Р Р†РЎвЂ№Р С—Р С•Р В»Р Р…Р ВµР Р…Р В° Р Т‘РЎР‚РЎС“Р С–Р С‘Р С Р В°Р Т‘Р СР С‘Р Р…Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂљР С•РЎР‚Р С•Р С", -1)
+            sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Форма была выполнена другим администратором", -1)
         end)
         formb = false
          end
@@ -751,12 +748,12 @@ function getBodyPartCoordinates(id, handle)
 function cmd_afk(arg)
 	lua_thread.create(function()
 		args = tonumber(arg)
-		if not args then sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Р вЂ™Р Р†Р ВµР Т‘Р С‘РЎвЂљР Вµ ID Р С‘Р С–РЎР‚Р С•Р С”Р В°", -1) return end
-        sampSendChat("/ans "..arg.." Р вЂ™РЎвЂ№ РЎвЂљРЎС“РЎвЂљ? Р С›РЎвЂљР Р†Р ВµРЎвЂљ Р Р† Р В»РЎР‹Р В±Р С•Р в„– РЎвЂЎР В°РЎвЂљ.")
+		if not args then sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Введите ID игрока", -1) return end
+        sampSendChat("/ans "..arg.." Вы тут? Ответ в любой чат.")
         wait(900)
-		sampSendChat("/ans "..arg.." Р вЂ™РЎвЂ№ РЎвЂљРЎС“РЎвЂљ? Р С›РЎвЂљР Р†Р ВµРЎвЂљ Р Р† Р В»РЎР‹Р В±Р С•Р в„– РЎвЂЎР В°РЎвЂљ.")
+		sampSendChat("/ans "..arg.." Вы тут? Ответ в любой чат.")
 		wait(1000)
-        sampSendChat("/ans "..arg.." Р вЂ™РЎвЂ№ РЎвЂљРЎС“РЎвЂљ? Р С›РЎвЂљР Р†Р ВµРЎвЂљ Р Р† Р В»РЎР‹Р В±Р С•Р в„– РЎвЂЎР В°РЎвЂљ.")
+        sampSendChat("/ans "..arg.." Вы тут? Ответ в любой чат.")
     end)
 end
 function autoupdate(json_url, prefix, url)
@@ -778,19 +775,27 @@ function autoupdate(json_url, prefix, url)
               lua_thread.create(function(prefix)
                 local dlstatus = require('moonloader').download_status
                 local color = -1
-                sampAddChatMessage(prefix.."Р вЂќР С•РЎРѓРЎвЂљРЎС“Р С—Р Р…Р С• Р С•Р В±Р Р…Р С•Р Р†Р В»Р ВµР Р…Р С‘Р Вµ Р В·Р В° Р Т‘Р В°РЎвЂљРЎС“: "..updateversion..". Р С›Р В±Р Р…Р С•Р Р†Р В»РЎРЏРЎР‹...")
+                sampAddChatMessage(prefix.."Доступно обновление за дату: "..updateversion..". Обновляю...", -1)
                 wait(250)
                 downloadUrlToFile(updatelink, thisScript().path,
                   function(id3, status1, p13, p23)
-                    elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-                      sampAddChatMessage((prefix..'Р С›Р В±Р Р…Р С•Р Р†Р В»Р ВµР Р…Р С‘Р Вµ Р В·Р В°Р Р†Р ВµРЎР‚РЎв‚¬Р ВµР Р…Р С•! Р РЋР С”РЎР‚Р С‘Р С—РЎвЂљ Р С–Р С•РЎвЂљР С•Р Р† Р С” РЎР‚Р В°Р В±Р С•РЎвЂљР Вµ!'), color)
-                      goupdatestatus = true
-                      lua_thread.create(function() wait(500) thisScript():reload() end)
-                    end
+                    if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
+                        print("vse ok")
+                        elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
+                            sampAddChatMessage(prefix..'Обновление завершено! Скрипт готов к работе!', -1)
+                            local ip, port = sampGetCurrentServerAddress()
+                            if ip == '176.32.39.179' then
+                                sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Скрипт успешно активирован | Author: Fernando Miracle | Marchionne Rowtea", -1)
+                                activate = true
+                            else
+                                sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Вы должны находится на States Role Play! Скрипт деактивирован", -1)
+                            end
+                            goupdatestatus = true
+                        end
                     if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
                       if goupdatestatus == nil then
-                        sampAddChatMessage(prefix.."Р С›Р В±Р Р…Р С•Р Р†Р В»Р ВµР Р…Р С‘Р Вµ РЎРѓР С”РЎР‚Р С‘Р С—РЎвЂљР В° Р Р…Р Вµ РЎС“Р Т‘Р В°Р В»Р С•РЎРѓРЎРЉ, Р С•Р В±Р Р…Р С•Р Р†Р С‘РЎвЂљР Вµ Р Р†РЎР‚РЎС“РЎвЂЎР Р…РЎС“РЎР‹. Р пїЅР Р…РЎРѓРЎвЂљРЎР‚РЎС“Р С”РЎвЂ Р С‘РЎРЏ Р Р† Р С™Р С•Р Р…РЎРѓР С•Р В»Р С‘ (~)") 
-                        print("Р С›РЎвЂљР С—Р С‘РЎв‚¬Р С‘РЎвЂљР Вµ Р Р† Р Р†Р С” РЎРѓР С•Р В·Р Т‘Р В°РЎвЂљР ВµР В»РЎРЏР С: vk.com/lisov218 Р С‘Р В»Р С‘ vk.com/richardski")
+                        sampAddChatMessage(prefix.."Обновление скрипта не удалось, обновите вручную. Инструкция в Консоли (~)") 
+                        print("Отпишите в вк создателям: vk.com/lisov218 или vk.com/richardski")
                         activate = false
                         update = false
                       end
@@ -801,12 +806,19 @@ function autoupdate(json_url, prefix, url)
               )
             else
               update = false
-              sampAddChatMessage(prefix.."Р вЂќР В°РЎвЂљР В°-Р вЂ™Р ВµРЎР‚РЎРѓР С‘РЎРЏ РЎРѓР С”РЎР‚Р С‘Р С—РЎвЂљР В°: "..thisScript().version..". Р С›Р В±Р Р…Р С•Р Р†Р В»Р ВµР Р…Р С‘Р Вµ Р Р…Р Вµ Р СћРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљРЎРѓРЎРЏ", -1)
+              local ip, port = sampGetCurrentServerAddress()
+			    if ip == '176.32.39.179' then
+			        sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Скрипт успешно активирован | Author: Fernando Miracle | Marchionne Rowtea", -1)
+			        activate = true
+			    else
+			        sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Вы должны находится на States Role Play! Скрипт деактивирован", -1)
+			    end
+              sampAddChatMessage(prefix.."Дата-Версия скрипта: "..thisScript().version..". Обновление не Требуется", -1)
             end
           end
         else
-            sampAddChatMessage(prefix.."Р С›Р В±Р Р…Р С•Р Р†Р В»Р ВµР Р…Р С‘Р Вµ РЎРѓР С”РЎР‚Р С‘Р С—РЎвЂљР В° Р Р…Р Вµ РЎС“Р Т‘Р В°Р В»Р С•РЎРѓРЎРЉ, Р С•Р В±Р Р…Р С•Р Р†Р С‘РЎвЂљР Вµ Р Р†РЎР‚РЎС“РЎвЂЎР Р…РЎС“РЎР‹. Р пїЅР Р…РЎРѓРЎвЂљРЎР‚РЎС“Р С”РЎвЂ Р С‘РЎРЏ Р Р† Р С™Р С•Р Р…РЎРѓР С•Р В»Р С‘ (~)") 
-            print("Р С›РЎвЂљР С—Р С‘РЎв‚¬Р С‘РЎвЂљР Вµ Р Р† Р Р†Р С” РЎРѓР С•Р В·Р Т‘Р В°РЎвЂљР ВµР В»РЎРЏР С: vk.com/lisov218 Р С‘Р В»Р С‘ vk.com/richardski")
+            sampAddChatMessage(prefix.."Обновление скрипта не удалось, обновите вручную. Инструкция в Консоли (~)") 
+            print("Отпишите в вк создателям: vk.com/lisov218 или vk.com/richardski")
             activate = false
             update = false
         end
