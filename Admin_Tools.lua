@@ -1,5 +1,6 @@
 script_name("Admin Tools")
 script_author("Lisov AND Rowtea")
+script_version("24.04.2020")
 
 -- Инклуды --
 local encoding = require 'encoding'
@@ -9,7 +10,7 @@ local imgui = require 'imgui'
 local encoding = require 'encoding'
 encoding.default = 'CP1251'
 u8 = encoding.UTF8
-local notf = import 'imgui_notf.lua'
+local notf = import 'lib/imgui_notf.lua'
 -- Инклуды --
 
 local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED) -- свой id.
@@ -24,6 +25,7 @@ local ffi = require "ffi"
 local getBonePosition = ffi.cast("int (__thiscall*)(void*, float*, int, bool)", 0x5E4280)
 require "lib.moonloader"
 local mem = require "memory"
+local citem = imgui.ImInt(0)
 
 -- Переменные --
 local activate = false
@@ -87,56 +89,65 @@ function apply_custom_style()
     local colors = style.Colors
     local clr = imgui.Col
     local ImVec4 = imgui.ImVec4
-    style.WindowRounding = 2
+    style.WindowPadding = imgui.ImVec2(9, 5)
+    style.WindowRounding = 10
+    style.ChildWindowRounding = 10
+    style.FramePadding = imgui.ImVec2(5, 3)
+    style.FrameRounding = 6.0
+    style.ItemSpacing = imgui.ImVec2(9.0, 3.0)
+    style.ItemInnerSpacing = imgui.ImVec2(9.0, 3.0)
+    style.IndentSpacing = 21
+    style.ScrollbarSize = 6.0
+    style.ScrollbarRounding = 13
+    style.GrabMinSize = 17.0
+    style.GrabRounding = 16.0
     style.WindowTitleAlign = imgui.ImVec2(0.5, 0.5)
-    style.ChildWindowRounding = 2.0
-    style.FrameRounding = 3
-    style.ItemSpacing = imgui.ImVec2(5.0, 4.0)
-    style.ScrollbarSize = 13.0
-    style.ScrollbarRounding = 0
-    style.GrabMinSize = 8.0
-    style.GrabRounding = 1.0
-    style.WindowPadding = imgui.ImVec2(4.0, 4.0)
-    style.FramePadding = imgui.ImVec2(3.5, 3.5)
-    style.ButtonTextAlign = imgui.ImVec2(0.0, 0.5)
-    colors[clr.WindowBg]              = ImVec4(0.14, 0.12, 0.16, 1.00);
-    colors[clr.ChildWindowBg]         = ImVec4(0.30, 0.20, 0.39, 0.00);
-    colors[clr.PopupBg]               = ImVec4(0.05, 0.05, 0.10, 0.90);
-    colors[clr.Border]                = ImVec4(0.89, 0.85, 0.92, 0.30);
-    colors[clr.BorderShadow]          = ImVec4(0.00, 0.00, 0.00, 0.00);
-    colors[clr.FrameBg]               = ImVec4(0.30, 0.20, 0.39, 1.00);
-    colors[clr.FrameBgHovered]        = ImVec4(0.41, 0.19, 0.63, 0.68);
-    colors[clr.FrameBgActive]         = ImVec4(0.41, 0.19, 0.63, 1.00);
-    colors[clr.TitleBg]               = ImVec4(0.41, 0.19, 0.63, 0.45);
-    colors[clr.TitleBgCollapsed]      = ImVec4(0.41, 0.19, 0.63, 0.35);
-    colors[clr.TitleBgActive]         = ImVec4(0.41, 0.19, 0.63, 0.78);
-    colors[clr.MenuBarBg]             = ImVec4(0.30, 0.20, 0.39, 0.57);
-    colors[clr.ScrollbarBg]           = ImVec4(0.30, 0.20, 0.39, 1.00);
-    colors[clr.ScrollbarGrab]         = ImVec4(0.41, 0.19, 0.63, 0.31);
-    colors[clr.ScrollbarGrabHovered]  = ImVec4(0.41, 0.19, 0.63, 0.78);
-    colors[clr.ScrollbarGrabActive]   = ImVec4(0.41, 0.19, 0.63, 1.00);
-    colors[clr.ComboBg]               = ImVec4(0.30, 0.20, 0.39, 1.00);
-    colors[clr.CheckMark]             = ImVec4(0.56, 0.61, 1.00, 1.00);
-    colors[clr.SliderGrab]            = ImVec4(0.41, 0.19, 0.63, 0.24);
-    colors[clr.SliderGrabActive]      = ImVec4(0.41, 0.19, 0.63, 1.00);
-    colors[clr.Button]                = ImVec4(0.41, 0.19, 0.63, 0.44);
-    colors[clr.ButtonHovered]         = ImVec4(0.41, 0.19, 0.63, 0.86);
-    colors[clr.ButtonActive]          = ImVec4(0.64, 0.33, 0.94, 1.00);
-    colors[clr.Header]                = ImVec4(0.41, 0.19, 0.63, 0.76);
-    colors[clr.HeaderHovered]         = ImVec4(0.41, 0.19, 0.63, 0.86);
-    colors[clr.HeaderActive]          = ImVec4(0.41, 0.19, 0.63, 1.00);
-    colors[clr.ResizeGrip]            = ImVec4(0.41, 0.19, 0.63, 0.20);
-    colors[clr.ResizeGripHovered]     = ImVec4(0.41, 0.19, 0.63, 0.78);
-    colors[clr.ResizeGripActive]      = ImVec4(0.41, 0.19, 0.63, 1.00);
-    colors[clr.CloseButton]           = ImVec4(1.00, 1.00, 1.00, 0.75);
-    colors[clr.CloseButtonHovered]    = ImVec4(0.88, 0.74, 1.00, 0.59);
-    colors[clr.CloseButtonActive]     = ImVec4(0.88, 0.85, 0.92, 1.00);
-    colors[clr.PlotLines]             = ImVec4(0.89, 0.85, 0.92, 0.63);
-    colors[clr.PlotLinesHovered]      = ImVec4(0.41, 0.19, 0.63, 1.00);
-    colors[clr.PlotHistogram]         = ImVec4(0.89, 0.85, 0.92, 0.63);
-    colors[clr.PlotHistogramHovered]  = ImVec4(0.41, 0.19, 0.63, 1.00);
-    colors[clr.TextSelectedBg]        = ImVec4(0.41, 0.19, 0.63, 0.43);
-    colors[clr.ModalWindowDarkening]  = ImVec4(0.20, 0.20, 0.20, 0.35);
+    style.ButtonTextAlign = imgui.ImVec2(0.5, 0.5)
+
+
+    colors[clr.Text]                   = ImVec4(0.90, 0.90, 0.90, 1.00)
+    colors[clr.TextDisabled]           = ImVec4(1.00, 1.00, 1.00, 1.00)
+    colors[clr.WindowBg]               = ImVec4(0.00, 0.00, 0.00, 1.00)
+    colors[clr.ChildWindowBg]          = ImVec4(0.00, 0.00, 0.00, 1.00)
+    colors[clr.PopupBg]                = ImVec4(0.00, 0.00, 0.00, 1.00)
+    colors[clr.Border]                 = ImVec4(0.82, 0.77, 0.78, 1.00)
+    colors[clr.BorderShadow]           = ImVec4(0.35, 0.35, 0.35, 0.66)
+    colors[clr.FrameBg]                = ImVec4(1.00, 1.00, 1.00, 0.28)
+    colors[clr.FrameBgHovered]         = ImVec4(0.68, 0.68, 0.68, 0.67)
+    colors[clr.FrameBgActive]          = ImVec4(0.79, 0.73, 0.73, 0.62)
+    colors[clr.TitleBg]                = ImVec4(0.00, 0.00, 0.00, 1.00)
+    colors[clr.TitleBgActive]          = ImVec4(0.46, 0.46, 0.46, 1.00)
+    colors[clr.TitleBgCollapsed]       = ImVec4(0.00, 0.00, 0.00, 1.00)
+    colors[clr.MenuBarBg]              = ImVec4(0.00, 0.00, 0.00, 0.80)
+    colors[clr.ScrollbarBg]            = ImVec4(0.00, 0.00, 0.00, 0.60)
+    colors[clr.ScrollbarGrab]          = ImVec4(1.00, 1.00, 1.00, 0.87)
+    colors[clr.ScrollbarGrabHovered]   = ImVec4(1.00, 1.00, 1.00, 0.79)
+    colors[clr.ScrollbarGrabActive]    = ImVec4(0.80, 0.50, 0.50, 0.40)
+    colors[clr.ComboBg]                = ImVec4(0.24, 0.24, 0.24, 0.99)
+    colors[clr.CheckMark]              = ImVec4(0.99, 0.99, 0.99, 0.52)
+    colors[clr.SliderGrab]             = ImVec4(1.00, 1.00, 1.00, 0.42)
+    colors[clr.SliderGrabActive]       = ImVec4(0.76, 0.76, 0.76, 1.00)
+    colors[clr.Button]                 = ImVec4(0.51, 0.51, 0.51, 0.60)
+    colors[clr.ButtonHovered]          = ImVec4(0.68, 0.68, 0.68, 1.00)
+    colors[clr.ButtonActive]           = ImVec4(0.67, 0.67, 0.67, 1.00)
+    colors[clr.Header]                 = ImVec4(0.72, 0.72, 0.72, 0.54)
+    colors[clr.HeaderHovered]          = ImVec4(0.92, 0.92, 0.95, 0.77)
+    colors[clr.HeaderActive]           = ImVec4(0.82, 0.82, 0.82, 0.80)
+    colors[clr.Separator]              = ImVec4(0.73, 0.73, 0.73, 1.00)
+    colors[clr.SeparatorHovered]       = ImVec4(0.81, 0.81, 0.81, 1.00)
+    colors[clr.SeparatorActive]        = ImVec4(0.74, 0.74, 0.74, 1.00)
+    colors[clr.ResizeGrip]             = ImVec4(0.80, 0.80, 0.80, 0.30)
+    colors[clr.ResizeGripHovered]      = ImVec4(0.95, 0.95, 0.95, 0.60)
+    colors[clr.ResizeGripActive]       = ImVec4(1.00, 1.00, 1.00, 0.90)
+    colors[clr.CloseButton]            = ImVec4(0.45, 0.45, 0.45, 0.50)
+    colors[clr.CloseButtonHovered]     = ImVec4(0.70, 0.70, 0.90, 0.60)
+    colors[clr.CloseButtonActive]      = ImVec4(0.70, 0.70, 0.70, 1.00)
+    colors[clr.PlotLines]              = ImVec4(1.00, 1.00, 1.00, 1.00)
+    colors[clr.PlotLinesHovered]       = ImVec4(1.00, 1.00, 1.00, 1.00)
+    colors[clr.PlotHistogram]          = ImVec4(1.00, 1.00, 1.00, 1.00)
+    colors[clr.PlotHistogramHovered]   = ImVec4(1.00, 1.00, 1.00, 1.00)
+    colors[clr.TextSelectedBg]         = ImVec4(1.00, 1.00, 1.00, 0.35)
+    colors[clr.ModalWindowDarkening]   = ImVec4(0.88, 0.88, 0.88, 0.35)
     end
     
     do
@@ -160,17 +171,18 @@ function imgui.OnDrawFrame()
             local btn_size = imgui.ImVec2(-0.1, 0)
         	imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
         	imgui.SetNextWindowSize(imgui.ImVec2(800, 400), imgui.Cond.FirstUseEver)
-        	imgui.Begin(u8"Admin Tools | Главное меню", admin_newmenu, imgui.WindowFlags.NoResize + imgui.WindowFlags.ShowBorders + imgui.WindowFlags.NoCollapse)
-        	imgui.BeginChild('left', imgui.ImVec2(200, 0), true) 
+        	imgui.Begin(u8"Admin Tools | Главное меню", admin_newmenu, imgui.WindowFlags.NoResize + imgui.WindowFlags.ShowBorders + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
+            imgui.BeginChild('left', imgui.ImVec2(200, 0), true) 
 		
 	
         if not selected then selected = 1 end
             if imgui.Selectable(u8'Информация', false) then selected = 1 end
             if imgui.Selectable(u8'Список команд', false) then selected = 2 end
 			if imgui.Selectable(u8'Основные функции', false) then selected = 3 end
-			if imgui.Selectable(u8'Телепортация', false) then selected = 4 end
-			if imgui.Selectable(u8'Настройки скрипта', false) then selected = 5 end
-            if imgui.Selectable(u8'О скрипте', false) then selected = 6 end
+            if imgui.Selectable(u8'Телепортация', false) then selected = 4 end
+            if imgui.Selectable(u8'Мероприятия', false) then selected = 5 end
+			if imgui.Selectable(u8'Настройки скрипта', false) then selected = 6 end
+            if imgui.Selectable(u8'О скрипте', false) then selected = 7 end
             imgui.EndChild()
             imgui.SameLine()
 
@@ -321,14 +333,24 @@ function imgui.OnDrawFrame()
 		            setCharCoordinates(PLAYER_PED, 1722.9276123047, -2117.9775390625, 13.546875)
 		        end
 			end
-		end
-		if selected == 5 then
+        end
+        if selected == 5 then
+            local gids = {24,31}
+            local gnames ={u8"Не выбрано", u8"Поливалка", u8"Король Дигла"}
+            imgui.PushItemWidth(190)
+            imgui.Combo(u8"Выберите Мероприятие", citem, gnames)
+            imgui.PushItemWidth(190)
+            imgui.InputInt()
+            imgui.Separator()
+            imgui.inputInt()
+        end
+		if selected == 6 then
 			imgui.Text(u8('Настройки скрипта / Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
 			imgui.Separator()	
 			imgui.Text(u8('Название\t\t\t\t\t\t\t\t\t\t\t\tАктивация'))
 			imgui.Text(u8('WallHack\t\t\t\t\t\t\t\t\t\t\t\t ALT+3(/settingswh)'))
-		end
-		if selected == 6 then
+        end
+		if selected == 7 then
 			imgui.Text(u8('О скрипте'))
 			imgui.Separator()	
 			imgui.Text(u8('Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
@@ -379,7 +401,7 @@ function imgui.OnDrawFrame()
             end
             if imgui.Button(u8'Отправить игрока на спавн', btn_size) then
                 lua_thread.create(function()
-                sampSendChat(string.format(u8"/slap %s", vzID))
+                sampSendChat(string.format(u8"/spawn %s", vzID))
                 end)
             end
             if imgui.Button(u8'Телепортироваться к игроку', btn_size) then
@@ -423,7 +445,7 @@ function imgui.OnDrawFrame()
                 lua_thread.create(function()
                 sampSendChat("/sethp ".. vzID .." 100")
                 wait(700)
-                sampSendChat("/a [recon] Выдал 100 HP игроку ".. name .."[".. vzID .."]")
+                sampSendChat("/a [Admin Tools] Выдал 100 HP игроку ".. name .."[".. vzID .."]")
                 end)
             end
             imgui.EndChild()
@@ -462,6 +484,7 @@ function main()
 	while not sampIsLocalPlayerSpawned() do wait(100) end
 	if defaultState and not nameTag then nameTagOn() end
     -- Команды --
+    autoupdate("https://raw.githubusercontent.com/softmvshine/admintools/master/checking.json", '{ff0000}[Admin Tools]{FFFFFF} ', "http://forum.samp-states.ru/threads/123/")
 
     wait(0)
 
@@ -638,7 +661,7 @@ if text:find("[A]", 1, true) then
         end
     end
     if text:find("/(.*) (%d+) (%d+) (.*)") then
-        formacmd, formaid3, formatime3, formareason3 = text:match("/(%S+) (%d+) (%d+) (.*)")
+        formacmd, formaid3, formatime3, formareason3 = text:match("/(%S+) (%d+) (%d+) (%d+)")
         formadm = text:match("^%[A%] (%a+_%a+)")
         local one, two = formadm:match("(.).*_(.*)")
         formaadm = ("%s. %s"):format(one, two)
@@ -735,4 +758,59 @@ function cmd_afk(arg)
 		wait(1000)
         sampSendChat("/ans "..arg.." Вы тут? Ответ в любой чат.")
     end)
+end
+function autoupdate(json_url, prefix, url)
+  local dlstatus = require('moonloader').download_status
+  local json = getWorkingDirectory() .. '\\'..thisScript().name..'-version.json'
+  if doesFileExist(json) then os.remove(json) end
+  downloadUrlToFile(json_url, json,
+    function(id, status, p1, p2)
+      if status == dlstatus.STATUSEX_ENDDOWNLOAD then
+        if doesFileExist(json) then
+          local f = io.open(json, 'r')
+          if f then
+            local info = decodeJson(f:read('*a'))
+            updatelink = info.updateurl
+            updateversion = info.latest
+            f:close()
+            os.remove(json)
+            if updateversion ~= thisScript().version then
+              lua_thread.create(function(prefix)
+                local dlstatus = require('moonloader').download_status
+                local color = -1
+                sampAddChatMessage((prefix..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion), color)
+                wait(250)
+                downloadUrlToFile(updatelink, thisScript().path,
+                  function(id3, status1, p13, p23)
+                    if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
+                      print(string.format('Загружено %d из %d.', p13, p23))
+                    elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
+                      print('Загрузка обновления завершена.')
+                      sampAddChatMessage((prefix..'Обновление завершено!'), color)
+                      goupdatestatus = true
+                      lua_thread.create(function() wait(500) thisScript():reload() end)
+                    end
+                    if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
+                      if goupdatestatus == nil then
+                        sampAddChatMessage((prefix..'Обновление прошло неудачно. Запускаю устаревшую версию..'), color)
+                        update = false
+                      end
+                    end
+                  end
+                )
+                end, prefix
+              )
+            else
+              update = false
+              print('v'..thisScript().version..': Обновление не требуется.')
+            end
+          end
+        else
+          print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..url)
+          update = false
+        end
+      end
+    end
+  )
+  while update ~= false do wait(100) end
 end
