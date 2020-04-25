@@ -1,6 +1,6 @@
 script_name("Admin Tools")
 script_author("Lisov AND Rowtea")
-script_version("24.04.2020")
+script_version("26.04.2020")
 
 -- Инклуды --
 local encoding = require 'encoding'
@@ -35,6 +35,7 @@ imgui.Process = false
 local forma = false
 local formb = false
 local formc = false
+local openmp = true
 local vzaimod = imgui.ImBool(false)
 local admin_newmenu = imgui.ImBool(false)
 local show_admin_templeader = imgui.ImBool(false)
@@ -45,6 +46,7 @@ local show_admin_info = imgui.ImBool(false)
 local new_report = false
 local user_report_name = nil
 local user_report_id = nil
+local prize = imgui.ImInt(0)
 -- Переменные --
 
 local color = 0x00FFFF
@@ -336,13 +338,36 @@ function imgui.OnDrawFrame()
         end
         if selected == 5 then
             local gids = {24,31}
-            local gnames ={u8"Не выбрано", u8"Поливалка", u8"Король Дигла"}
+            local gnames ={u8"Не выбрано", u8"Король Дигла", u8"Поливалка", u8"Русская Рулетка", u8"Прятки"}
             imgui.PushItemWidth(190)
             imgui.Combo(u8"Выберите Мероприятие", citem, gnames)
             imgui.PushItemWidth(190)
-            imgui.InputInt()
+            imgui.InputInt(u8"Введите Приз", prize, 0)
+            if imgui.Button(u8"Опубликовать") then
+                lua_thread.create(function()
+                    sampSendChat("/msg Уважаемые игроки проходит мероприятие: "..u8:decode(gnames[citem.v + 1]))
+                    wait(1000)
+                    sampSendChat("/msg Приз мероприятия составляет: "..u8:decode(prize.v).."$")
+                    wait(1000)
+                    sampSendChat("/msg Для телепортации введите: /gotomp")
+                    wait(1000)
+                    sampSendChat("/mp")
+                end)
+            end
             imgui.Separator()
-            imgui.inputInt()
+            imgui.Text(u8("Примерный Текст Оповещения\nУважаемые игроки проходит мероприятие: "..u8:decode(gnames[citem.v + 1]).."\nПриз Мероприятия составляет: "..prize.v.."\nДля телепортации введите: /gotomp"))
+            imgui.Separator()
+            if imgui.Button(u8"Правила Мероприятия", btn_size) then
+                lua_thread.create(function() 
+                    sampSendChat("/msg [МП] Правила Мероприятия:")
+                    wait(1000)
+                    sampSendChat("/msg [МП] На мероприятии запрещены: Аптечки, Маски, Анимации, Наркотики")
+                    wait(1000)
+                    sampSendChat("/msg [МП] Администратор в праве разрешить использовать данные функции")
+                    wait(1000)
+                    sampSendChat("/msg [МП] Всем желаю удачи <3")
+                end)
+            end 
         end
 		if selected == 6 then
 			imgui.Text(u8('Настройки скрипта / Авторы скипта: Fernando Miracle | Marchionne Rowtea'))
@@ -466,14 +491,19 @@ function main()
     -- Загрузка SAMP --
     if not isSampfuncsLoaded() or not isSampLoaded() then return end
     while not isSampAvailable() do wait(0) end
+    notf.addNotification(string.format("Проверка Обновлений Скрипта", 115, os.date()), 15)
     autoupdate("https://raw.githubusercontent.com/softmvshine/admintools/master/checking.json", '{ff0000}[Admin Tools]{FFFFFF} ', "http://forum.samp-states.ru/threads/123/")
-    notf.addNotification(string.format("Помощник администратора, включен!\nДата-Версия скрипта: "..thisScript().version, 115, os.date()), 15)
     -- Загрузка SAMP --
     
 
     -- Команды --
 	sampRegisterChatCommand("amenu", cmd_amenu)
     sampRegisterChatCommand("afk", cmd_afk)
+    sampRegisterChatCommand("check", function()
+        print(forma)
+        print(formb)
+        print(formc)
+    end)
     sampRegisterChatCommand(optionsCommand, function(param)
 		if param == "bones" then whVisible = param; nameTagOff()
 		elseif param == "names" or param == "all" then whVisible = param if not nameTag then nameTagOn() end
@@ -491,6 +521,40 @@ function main()
 
         imgui.Process = admin_newmenu.v or show_admin_prav.v or vzaimod.v
 
+        if wasKeyPressed(key.VK_P) then
+            local chatin = sampIsChatInputActive()
+            if chatin == false then admin_newmenu.v = not admin_newmenu.v end
+        end
+        if wasKeyPressed(key.VK_F5) then
+            if formb == true then
+                if formacmd == "warn" or formacmd == "kick" then sampSendChat("/pm "..formaid.." Если вы не согласны с наказанием напишите жалобу forum.samp-states.ru") end
+                    sampSendChat("/"..formacmd.." "..formaid.." "..formatime2.." • "..formaadm)
+                    wait(1000) 
+                    sampSendChat("/a [FORMA] +")
+                    formb = false
+                    formacmd = nil
+                    formaid = nil
+                    formatime = nil
+            end
+            if forma == true then
+                    --if formacmd == "inftime" then sampSendChat("/pm "..formaid.." Если вы не согласны с наказанием напишите жалобу forum.samp-states.ru") end
+                    sampSendChat("/"..formacmd.." "..formaid2.." • "..formaadm)
+                    lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
+                    forma = false
+                    formacmd = nil
+                    formaid = nil
+			end
+            if formc == true then
+                if formacmd == "jail" or formacmd == "ban" then sampSendChat("/pm "..formaid.." Если вы не согласны с наказанием напишите жалобу forum.samp-states.ru") end
+                sampSendChat("/"..formacmd.." "..formaid3.." "..formatime3.." "..formareason3.." • "..formaadm)
+                lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
+                formc = false
+                formacmd = nil
+                formaid3 = nil
+                formatime3 = nil
+                formareason3 = nil
+            end
+        end
         if isKeyJustPressed(VK_J) then
             local valid, ped = getCharPlayerIsTargeting(PLAYER_HANDLE)
             if valid and doesCharExist(ped) then
@@ -552,64 +616,6 @@ function main()
 				nameTagOn()
 			end
 		end
-        if wasKeyPressed(key.VK_P) then
-            local chatin = sampIsChatInputActive()
-            if chatin == false then admin_newmenu.v = not admin_newmenu.v end
-        end
-        if wasKeyPressed(key.VK_F5) then
-            if formb == true then
-                if formacmd == "warn" or formacmd == "kick" then 
-                    sampSendChat("/pm "..formaid.." Если вы не согласны с наказанием напишите жалобу forum.samp-states.ru")
-                    wait(500)
-                    sampSendChat("/"..formacmd.." "..formaid.." "..formatime2.." • "..formaadm)
-                    wait(2000) 
-                    sampSendChat("/a [FORMA] +")
-                    formb = false
-                    formacmd = nil
-                    formaid = nil
-                    formatime = nil
-                
-                else
-                    sampSendChat("/"..formacmd.." "..formaid.." "..formatime2.." • "..formaadm)
-                    wait(1000) 
-                    sampSendChat("/a [FORMA] +")
-                    formb = false
-                    formacmd = nil
-                    formaid = nil
-                    formatime = nil
-                end
-            end
-            if forma == true then
-                if formacmd == "inftime" then
-                        sampSendChat("/pm "..formaid.." Если вы не согласны с наказанием напишите жалобу forum.samp-states.ru")
-                        wait(500)
-                        sampSendChat("/"..formacmd.." "..formaid2.." • "..formaadm)
-                        lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
-                        forma = false
-                        formacmd = nil
-                        formaid = nil
-                else
-                    sampSendChat("/"..formacmd.." "..formaid2.." • "..formaadm)
-                    lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
-                    forma = false
-                    formacmd = nil
-                    formaid = nil
-                end
-			end
-            if formc == true then
-                if formacmd == "jail" or formacmd == "ban" then
-                sampSendChat("/pm "..formaid.." Если вы не согласны с наказанием напишите жалобу forum.samp-states.ru")
-                wait(1100)
-                sampSendChat("/"..formacmd.." "..formaid3.." "..formatime3.." "..formareason3.." • "..formaadm)
-				lua_thread.create(function() wait(1000) sampSendChat("/a [FORMA] +") end)
-                formc = false
-                formacmd = nil
-				formaid3 = nil
-				formatime3 = nil
-                formareason3 = nil
-                end
-            end
-        end
     end
 end
 
@@ -633,7 +639,7 @@ function sampev.onServerMessage(color, text)
 if text:find("[A]", 1, true) then
     if text:find("/(.*) (.*) (.*)") then
         formacmd, formaid, formatime2 = text:match("/(%S+) (%d+) (%S+)")
-        if formacmd == "kick" or formacmd == "warn" or formacmd == "sethp" or formacmd == "skick" or formacmd == "setskin" then
+        if formacmd == "kick" or formacmd == "warn" or formacmd == "sethp" or formacmd == "skick" or formacmd == "setskin" or formacmd == "givegun" then
             formadm = text:match("^%[A%] (%a+_%a+)")
             local one, two = formadm:match("(.).*_(.*)")
             formaadm = ("%s. %s"):format(one, two)
@@ -662,7 +668,7 @@ if text:find("[A]", 1, true) then
         formadm = text:match("^%[A%] (%a+_%a+)")
         local one, two = formadm:match("(.).*_(.*)")
         formaadm = ("%s. %s"):format(one, two)
-        if formacmd == "ban" or formacmd == "jail" or formacmd == "givegun" then
+        if formacmd == "ban" or formacmd == "jail" then
             formc = true
             lua_thread.create(function()
                 wait(100)
@@ -745,6 +751,9 @@ function getBodyPartCoordinates(id, handle)
     return a, r, g, b
   end
 
+function sampev.onShowDialog(dialogId, style, tittle, button1, button2, text)
+end
+
 function cmd_afk(arg)
 	lua_thread.create(function()
 		args = tonumber(arg)
@@ -757,73 +766,57 @@ function cmd_afk(arg)
     end)
 end
 function autoupdate(json_url, prefix, url)
-  local dlstatus = require('moonloader').download_status
-  local json = getWorkingDirectory() .. '\\'..thisScript().name..'-version.json'
-  if doesFileExist(json) then os.remove(json) end
-  downloadUrlToFile(json_url, json,
-    function(id, status, p1, p2)
-      if status == dlstatus.STATUSEX_ENDDOWNLOAD then
-        if doesFileExist(json) then
-          local f = io.open(json, 'r')
-          if f then
-            local info = decodeJson(f:read('*a'))
-            updatelink = info.updateurl
-            updateversion = info.latest
-            f:close()
-            os.remove(json)
-            if updateversion ~= thisScript().version then
-              lua_thread.create(function(prefix)
-                local dlstatus = require('moonloader').download_status
-                local color = -1
-                sampAddChatMessage(prefix.."Доступно обновление за дату: "..updateversion..". Обновляю...", -1)
-                wait(250)
-                downloadUrlToFile(updatelink, thisScript().path,
-                  function(id3, status1, p13, p23)
-                    if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
-                        print("vse ok")
-                        elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-                            sampAddChatMessage(prefix..'Обновление завершено! Скрипт готов к работе!', -1)
-                            local ip, port = sampGetCurrentServerAddress()
-                            if ip == '176.32.39.179' then
-                                sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Скрипт успешно активирован | Author: Fernando Miracle | Marchionne Rowtea", -1)
-                                activate = true
-                            else
-                                sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Вы должны находится на States Role Play! Скрипт деактивирован", -1)
-                            end
-                            goupdatestatus = true
+    local dlstatus = require('moonloader').download_status
+    local json = getWorkingDirectory() .. '\\'..thisScript().name..'-version.json'
+    if doesFileExist(json) then os.remove(json) end
+    downloadUrlToFile(json_url, json,
+      function(id, status, p1, p2)
+        if status == dlstatus.STATUSEX_ENDDOWNLOAD then
+          if doesFileExist(json) then
+            local f = io.open(json, 'r')
+            if f then
+              local info = decodeJson(f:read('*a'))
+              updatelink = info.updateurl
+              updateversion = info.latest
+              f:close()
+              os.remove(json)
+              if updateversion ~= thisScript().version then
+                lua_thread.create(function(prefix)
+                  local dlstatus = require('moonloader').download_status
+                  local color = -1
+                  notf.addNotification(string.format("Обновляюсь на версию: "..thisScript().updateversion, 115, os.date()), 15)
+                  wait(250)
+                  downloadUrlToFile(updatelink, thisScript().path,
+                    function(id3, status1, p13, p23)
+                      if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
+                        print(string.format('Загружено %d из %d.', p13, p23))
+                      elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
+                        notf.addNotification(string.format(u8"Скрипт успешно обновлён\nВерсия скрипта: "..thisScript().version, 115, os.date()), 15)
+                        notf.addNotification(string.format(u8"Помощник администратора, включен! Меню - /amenu", 115, os.date()), 15)
+                        goupdatestatus = true
+                        lua_thread.create(function() wait(500) thisScript():reload() end)
+                      end
+                      if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
+                        if goupdatestatus == nil then
+                            notf.addNotification(string.format("Не удалось обновиться. Отпишите в ВК\nvk.com/lisov218\nvk.com/richardski", 115, os.date()), 15)
+                          update = false
                         end
-                    if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
-                      if goupdatestatus == nil then
-                        sampAddChatMessage(prefix.."Обновление скрипта не удалось, обновите вручную. Инструкция в Консоли (~)") 
-                        print("Отпишите в вк создателям: vk.com/lisov218 или vk.com/richardski")
-                        activate = false
-                        update = false
                       end
                     end
-                  end
+                  )
+                  end, prefix
                 )
-                end, prefix
-              )
-            else
-              update = false
-              local ip, port = sampGetCurrentServerAddress()
-			    if ip == '176.32.39.179' then
-			        sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Скрипт успешно активирован | Author: Fernando Miracle | Marchionne Rowtea", -1)
-			        activate = true
-			    else
-			        sampAddChatMessage("{ff0000}[Admin Tools] {FFFFFF}Вы должны находится на States Role Play! Скрипт деактивирован", -1)
-			    end
-              sampAddChatMessage(prefix.."Дата-Версия скрипта: "..thisScript().version..". Обновление не Требуется", -1)
+              else
+                update = false
+                notf.addNotification(string.format("Помощник администратора, включен!\nВерсия за: "..thisScript().version.."\nОбновления не требуются", 115, os.date()), 15)
+              end
             end
-          end
-        else
-            sampAddChatMessage(prefix.."Обновление скрипта не удалось, обновите вручную. Инструкция в Консоли (~)") 
-            print("Отпишите в вк создателям: vk.com/lisov218 или vk.com/richardski")
-            activate = false
+          else
+            notf.addNotification(string.format(u8"Не могу проверить обновления. Отпишите в ВК\nvk.com/lisov218\nvk.com/richardski", 115, os.date()), 15)
             update = false
+          end
         end
       end
-    end
-  )
-  while update ~= false do wait(100) end
-end
+    )
+    while update ~= false do wait(100) end
+  end
